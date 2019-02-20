@@ -15,5 +15,4 @@ model = Sequential([
 ])
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-
-# model.fit(data, labels, epochs=10, batch_size=32)
+model.fit(data, labels, epochs=10, batch_size=32)
