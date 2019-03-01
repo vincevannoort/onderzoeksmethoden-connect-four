@@ -18,8 +18,9 @@ import csv
 Settings
 """
 
-WIDTH = 7
 HEIGHT = 6
+WIDTH = 7
+SIZE = HEIGHT * WIDTH
 
 with open('../data/c4_game_database.csv', newline="") as csvfile:
     data = list(csv.reader(csvfile))
@@ -34,17 +35,15 @@ data = [list(filter(None, row)) for row in data]
 data = [list(map(float, row)) for row in data]
 
 # TODO convert list to numpy array with shape of (HEIGHT, WIDTH)
-input = [ row[:-2] for row in data ]
-input = [np.asarray(row) for row in input]
-input = np.asarray(input)
-print(input.shape)
+input = [row[:SIZE] for row in data]
+input = np.array(input)
 
-output = [ row[-1] for row in data ]
+
+output = [row[-1] for row in data]
 
 # Convert [-1, 0, 1] -> [0, 0,5, 1]
 output =  [(i+1)/2 for i in output]
-output = np.asarray(output)
-print(output.shape)
+output = np.array(output)
 
 """
 Keras Model
@@ -52,17 +51,25 @@ Keras Model
 
 # Creating the model
 model = keras.Sequential([
-  keras.layers.Flatten(input_shape=(HEIGHT, WIDTH)),
-  keras.layers.Dense(HEIGHT * WIDTH, activation=tf.nn.sigmoid),
-  keras.layers.Dense(1, activation=tf.nn.softmax),
+  keras.layers.Dense(SIZE, input_dim=SIZE, activation=tf.nn.tanh),
+  keras.layers.Dense(SIZE, activation=tf.nn.tanh),
+  keras.layers.Dense(SIZE, activation=tf.nn.tanh),
+  keras.layers.Dense(SIZE, activation=tf.nn.tanh),
+  keras.layers.Dense(1, activation=tf.nn.tanh),
 ])
 
 model.compile(
   optimizer=tf.train.AdamOptimizer(),
-  loss='binary_crossentropy',
+  loss='mean_squared_error',
   metrics=['accuracy']
 )
 
-print("Got here")
-model.fit(input, output, verbose=1, epochs=1)
-print("Got here 2")
+model.fit(input, output, verbose=1, epochs=3, validation_split=0.1)
+
+def Predict(x):
+  prediction = model.predict(np.array([input[x]]))
+  print(f"Prediction: {prediction} Real: {output[x]}")
+
+Predict(0)
+Predict(1)
+Predict(2)
