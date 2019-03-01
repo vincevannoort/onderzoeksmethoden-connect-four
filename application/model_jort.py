@@ -17,10 +17,13 @@ import csv
 """
 Settings
 """
-
 HEIGHT = 6
 WIDTH = 7
 SIZE = HEIGHT * WIDTH
+LOG_PATH = '../data/model_logs'
+MODEL = 0
+# CommandLine: python3 -m tensorboard.main --logdir {LOG_PATH}
+tensorboard = keras.callbacks.TensorBoard(log_dir=f'{LOG_PATH}/model_{MODEL}', histogram_freq=0, write_graph=True, write_images=True)
 
 with open('../data/c4_game_database.csv', newline="") as csvfile:
     data = list(csv.reader(csvfile))
@@ -64,7 +67,7 @@ model.compile(
   metrics=['accuracy']
 )
 
-model.fit(input, output, verbose=1, epochs=3, validation_split=0.1)
+model.fit(input, output, verbose=1, epochs=3, callbacks=[tensorboard], validation_split=0.1)
 
 def Predict(x):
   prediction = model.predict(np.array([input[x]]))
