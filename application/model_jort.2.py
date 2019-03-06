@@ -11,6 +11,7 @@ import os
 # Helper libraries
 import numpy as np
 import csv
+from functools import reduce
 
 class Model:
   def __init__(self, height:int, width:int, log_path:str, model_path:str):
@@ -72,6 +73,7 @@ class Model:
     return (train_data, test_data)
 
   def create_tensorboard(self):
+    # CommandLine: python3 -m tensorboard.main --logdir {LOG_PATH}
     return keras.callbacks.TensorBoard(log_dir=f'{self.log_path}/model_jort_{self.model_number}', histogram_freq=0, write_graph=True, write_images=True)
 
   def train(self, tensorboard, train_data:list, test_data:list, epochs:int):
@@ -82,8 +84,10 @@ class Model:
 
   def predict(self, train_data:list, test_data:list):
     predictions = self.model.predict(train_data)
-    estimates = zip(predictions, test_data)
-    map(lambda estimate: print(f"Prediction: {estimate[0]} Real: {estimate[0]}"), estimates)
+    # Unpack: [[0.3], [0.5], [0.4]] -> [0.3, 0.5, 0.4]
+    predictions = [prediction for sublist in predictions for prediction in sublist]
+    estimates = list(zip(predictions, test_data))
+    [print(f"Prediction: {prediction:.2f} Real: {real}") for (prediction, real) in list(estimates)]
 
 if __name__ == "__main__":
   model = Model(6, 7, '../data/model_logs', '../data/models')
@@ -92,4 +96,4 @@ if __name__ == "__main__":
   tensorboard = model.create_tensorboard()
   model.train(tensorboard, train_data, test_data, 1)
   model.save()
-  model.predict(np.array(train_data[0]), np.array(test_data[0]))
+  model.predict(np.array(train_data[0:3]), np.array(test_data[0:3]))
