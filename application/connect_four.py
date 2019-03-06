@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class Player:
   def __init__(self, name: str, signature: int):
     self.name = name
@@ -91,6 +93,19 @@ class ConnectFour:
 
   def can_move(self, column: int):
     return self.board.get_hole(column, 0) is 0
+
+  def possible_boards(self, player: Player):
+    """
+    Returns a list of (column, board)
+    """
+    temp_board = deepcopy(self.board)
+    column_and_boards = []
+    for column in range(self.board.width):
+      if (self.can_move(column)):
+        self.move(player, column)
+        column_and_boards.append((column, self.board))
+        self.board = deepcopy(temp_board)
+    return column_and_boards
 
   def move(self, player: Player, column: int):
     if self.can_move(column):

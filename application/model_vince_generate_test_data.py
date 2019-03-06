@@ -21,10 +21,10 @@ class MoveFromPlayer:
     for hole in self.board.holes:
       board_representation += hole_to_array(hole, self.player)
 
-    return f'{board_representation}, {self.player.signature}, {self.column_played}, {self.game_won}\n'
+    return f'{board_representation};{self.player.signature};{self.column_played};{self.game_won}\n'
 
 if __name__ == '__main__':
-  amount_to_create = 100000
+  amount_to_create = 50
   with open(f'../data/data_generated/connect-four-game-{amount_to_create}.txt', 'w') as file:
     for game in range(amount_to_create):
       connect_four = ConnectFour()

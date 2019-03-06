@@ -1,5 +1,6 @@
 *.csv
 .DS_Store
+model_jort_0
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
