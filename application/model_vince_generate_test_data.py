@@ -27,45 +27,61 @@ class StateAfterMove:
     for hole in self.board.holes:
       board_representation += hole_to_array(hole, self.player)
 
-    return f'{board_representation};{self.player.signature};{self.column_played};{self.game_won}\n'
+    return f'{board_representation};{self.player.signature};{self.column_played};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  amount_to_create = 1
+  amount_to_create = 10000
   games_created = 0
-  with open(f'../data/data_generated/connect_four_game_{amount_to_create}.txt', 'w') as file:
-    vince = Player('Vince', 'A')
-    jort = Player('Jort', 'B')
-    while games_created < amount_to_create:
-      connect_four = ConnectFour(vince, jort)
-      states = dict()
+  with open(f'../data/data_generated/data_row_classify_connect_four_game_{amount_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{amount_to_create}.txt', 'w') as win_classify_file:
+    # file header
+    row_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
+    win_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
+      
+    bot = Player('Bot', 'A')
+    opposite = Player('Opposite', 'B')
+    while (games_created < amount_to_create):
+      connect_four = ConnectFour(bot, opposite)
+      states_per_player = dict()
+      all_states = list()
       while True:
         current_player = connect_four.current_player
         possible_columns = connect_four.board.get_possible_columns()
 
         # stop if the game ended in a draw
         if connect_four.is_draw():
+          # write all states for opposite
+          for state in all_states:
+            win_classify_file.write(f'{state};{0.5}\n')
           break
 
         column_to_play = choice(connect_four.board.get_possible_columns())
         connect_four.move(column_to_play)
-        print(current_player)
-        print(connect_four.board)
 
-        # setup a dict of states per player, since we only need the states from the winning player
+        # setup a dict of states_per_player per player, since we only need the states_per_player from the winning player
         state_after_player_move = StateAfterMove(copy(connect_four.board), current_player, column_to_play, connect_four.has_won())
-        if current_player in states:
-          states[current_player].append(state_after_player_move)
+
+        # for opposite
+        all_states.append(state_after_player_move)
+
+        # for bot
+        if current_player in states_per_player:
+          states_per_player[current_player].append(state_after_player_move)
         else:
-          states[current_player] = [state_after_player_move]
+          states_per_player[current_player] = [state_after_player_move]
 
         
-        if (connect_four.has_won() is jort):
-          break
+        won_player = connect_four.has_won()
+        if (won_player is not None):
 
-        if (connect_four.has_won() is vince):
-          games_created += 1
-          for state in states[vince]:
-            file.write(f'{state}')
+          # write all states for opposite
+          for state in all_states:
+            win_classify_file.write(f'{state};{1 if won_player is bot else 0}\n')
+
+          # write only winning states for bot
+          if (won_player is bot):
+            games_created += 1
+            for state in states_per_player[bot]:
+              row_classify_file.write(f'{state};{1 if won_player is bot else 0}\n')
           break
 
       if games_created % 1000 is 0:

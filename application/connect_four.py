@@ -1,4 +1,5 @@
 from copy import deepcopy
+from random import choice
 
 class Player:
   def __init__(self, name: str, signature: int):
@@ -48,7 +49,7 @@ class ConnectFour:
     self.board = Board()
     self.first_player = first_player
     self.second_player = second_player
-    self.current_player = first_player
+    self.current_player = choice([first_player, second_player])
 
   def has_won(self):
     # reference: https://stackoverflow.com/questions/29949169/python-connect-4-check-win-function
