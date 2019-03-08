@@ -32,7 +32,7 @@ class StateAfterMove:
 if __name__ == '__main__':
   amount_to_create = 1
   games_created = 0
-  with open(f'../data/data_generated/connect-four-game-{amount_to_create}.txt', 'w') as file:
+  with open(f'../data/data_generated/connect_four_game_{amount_to_create}.txt', 'w') as file:
     vince = Player('Vince', 'A')
     jort = Player('Jort', 'B')
     while games_created < amount_to_create:
