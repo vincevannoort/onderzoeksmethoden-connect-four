@@ -6,7 +6,7 @@ class Player:
     self.signature = signature
 
   def __str__(self):
-    return f'{self.name} won! (with signature: {self.signature}).'
+    return f'{self.name}'
 
 class Board:
   def __init__(self):
@@ -54,7 +54,8 @@ class ConnectFour:
     # reference: https://stackoverflow.com/questions/29949169/python-connect-4-check-win-function
     board_width = self.board.width
     board_height = self.board.height
-    player_signature = self.second_player.signature if self.current_player is self.first_player else self.first_player.signature
+    player = self.second_player if self.current_player is self.first_player else self.first_player
+    player_signature = player.signature
 
     # check horizontal spaces
     for x in range(board_width - 3):
@@ -63,7 +64,7 @@ class ConnectFour:
         and self.board.get_hole(x+1, y) == player_signature 
         and self.board.get_hole(x+2, y) == player_signature 
         and self.board.get_hole(x+3, y) == player_signature):
-          return True
+          return player
 
     # check vertical spaces
     for x in range(board_width):
@@ -72,7 +73,7 @@ class ConnectFour:
         and self.board.get_hole(x, y+1) == player_signature 
         and self.board.get_hole(x, y+2) == player_signature 
         and self.board.get_hole(x, y+3) == player_signature):
-          return True
+          return player
 
     # check / diagonal spaces
     for x in range(board_width - 3):
@@ -81,7 +82,7 @@ class ConnectFour:
         and self.board.get_hole(x+1, y-1) == player_signature 
         and self.board.get_hole(x+2, y-2) == player_signature 
         and self.board.get_hole(x+3, y-3) == player_signature):
-          return True
+          return player
 
     # check \ diagonal spaces
     for x in range(board_width - 3):
@@ -90,9 +91,9 @@ class ConnectFour:
         and self.board.get_hole(x+1, y+1) == player_signature 
         and self.board.get_hole(x+2, y+2) == player_signature 
         and self.board.get_hole(x+3, y+3) == player_signature):
-          return True
+          return player
     
-    return False
+    return None
   
   def is_draw(self):
     return 0 not in self.board.holes
@@ -126,10 +127,3 @@ if __name__ == '__main__':
   print(connect_four.board)
   connect_four.move(0)
   connect_four.move(0)
-  connect_four.move(1)
-  connect_four.move(0)
-  connect_four.move(2)
-  connect_four.move(0)
-  connect_four.move(3)
-  print(f'has won: {connect_four.has_won()}')
-  print(connect_four.board)
