@@ -28,28 +28,30 @@ for index, test_label in enumerate(test_labels):
 """
 Setup model
 """
-print(f'model setup.')
-model = Sequential([
-  Dense(inputs * 3, input_shape=(inputs,)),
-  Activation('relu'),
-  Dense(inputs * 3),
-  Activation('relu'),
-  Dense(width),
-  Activation('softmax'),
-])
+class Connect4KerasModel:
+  def __init__(self):
+    self.model = Sequential([
+      Dense(inputs * 3, input_shape=(inputs,)),
+      Activation('relu'),
+      Dense(inputs * 3),
+      Activation('relu'),
+      Dense(width),
+      Activation('softmax'),
+    ])
+    self.model.compile(optimizer=keras.optimizers.Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 
-"""
-Train model
-"""
-print(f'data & model ready, start training.')
-model.compile(optimizer=keras.optimizers.Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(test_data, test_labels_one_hot, epochs=10, batch_size=32)
-# print(model.evaluate(test_data, test_labels_one_hot))
+  def train(self, test_data, test_labels_one_hot):
+    self.model.fit(test_data, test_labels_one_hot, epochs=10, batch_size=32)
 
-input = test_data[10]
-prediction = model.predict(np.array([input,]))
-print(prediction)
-print(np.argmax(prediction))
+  def predict(self, board: Board)
+
+# print(f'data & model ready, start training.')
+# model.compile(optimizer=keras.optimizers.Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+# # print(model.evaluate(test_data, test_labels_one_hot))
+# input = test_data[10]
+# prediction = model.predict(np.array([input,]))
+# print(prediction)
+# print(np.argmax(prediction))
 
 # print(np.argmax(predicted[0]))
 # # keras.backend.one_hot(input, num_classes)
