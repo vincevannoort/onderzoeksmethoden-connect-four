@@ -1,7 +1,7 @@
 import numpy as np
 import keras 
 from keras.models import Sequential
-from keras.layers import Dense, Activation
+from keras.layers import Dense, Activation, Flatten
 from ast import literal_eval
 
 width = 7
@@ -13,7 +13,7 @@ inputs = width * height * 3
 Parse data
 """
 print(f'parse data.')
-with open('../data/data_generated/data_row_classify_connect_four_game_10000.txt') as file:
+with open('../data/data_generated/data_row_classify_connect_four_game_20.txt') as file:
     content = file.readlines()
 
 data = [line.strip().split(";") for line in content[1:]] 
@@ -24,23 +24,31 @@ for index, test_label in enumerate(test_labels):
   label = test_labels[index]
   test_labels_one_hot[index][label] = 1
 
+print(test_labels[0])
+print(test_labels_one_hot[0])
+print(test_labels[1])
+print(test_labels_one_hot[1])
+
 """
 Setup model
 """
 class Connect4KerasModel:
   def __init__(self):
     self.model = Sequential([
-      Dense(inputs * 3, input_shape=(inputs,)),
+      Dense(inputs, input_shape=(inputs,)),
+      Activation('relu'),
+      Dense(inputs * 3),
       Activation('relu'),
       Dense(inputs * 3),
       Activation('relu'),
       Dense(width),
       Activation('softmax'),
     ])
-    self.model.compile(optimizer=keras.optimizers.Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+
+    self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
   def train(self, test_data, test_labels_one_hot):
-    self.model.fit(test_data, test_labels_one_hot, epochs=25, batch_size=32)
+    self.model.fit(test_data, test_labels_one_hot, epochs=15, batch_size=32)
 
 
 print(f'data & model ready, start training.')

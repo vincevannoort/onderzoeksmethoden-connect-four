@@ -1,6 +1,11 @@
 from connect_four import ConnectFour, Board, Player
 from random import choice
 from copy import copy
+import readchar
+import os
+
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
 
 class StateAfterMove:
   def __init__(self, board: Board, player: Player, column_played: int, game_won: bool):
@@ -30,7 +35,7 @@ class StateAfterMove:
     return f'{board_representation};{self.player.signature};{self.column_played};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  amount_to_create = 10000
+  amount_to_create = 40
   games_created = 0
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{amount_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{amount_to_create}.txt', 'w') as win_classify_file:
     # file header
@@ -54,7 +59,19 @@ if __name__ == '__main__':
             win_classify_file.write(f'{state};{0.5}\n')
           break
 
-        column_to_play = choice(connect_four.board.get_possible_columns())
+        if (current_player is bot):
+          cls()
+          connect_four.board.print_with_colors(bot.signature, opposite.signature)
+          while True:
+            try:
+              print(f'Player: {current_player.name}, select column ( 1 - 7 )?')
+              column_to_play = int(readchar.readkey()) - 1
+              break
+            except:
+              print('Not a valid number, try again')
+        else:
+          column_to_play = choice(connect_four.board.get_possible_columns())
+
         connect_four.move(column_to_play)
 
         # setup a dict of states_per_player per player, since we only need the states_per_player from the winning player

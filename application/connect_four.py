@@ -1,5 +1,6 @@
 from copy import deepcopy
 from random import choice
+from termcolor import colored
 
 class Player:
   def __init__(self, name: str, signature: int):
@@ -36,6 +37,15 @@ class Board:
       if self.get_hole(column, 0) is 0:
         possible_columns.append(column)
     return possible_columns
+
+  def print_with_colors(self, first_player_signature, second_player_signature):
+    board_representation = " 1  2  3  4  5  6  7 \n"
+    for y in range(self.height):
+      for x in range(self.width):
+        signature = self.get_hole(x, y)
+        board_representation += f"({(colored(signature, 'red') if signature is first_player_signature else colored(signature, 'green')) if signature is not 0 else ' '})"
+      board_representation += '\n'
+    print(board_representation)
 
   def __str__(self):
     board_representation = ""
