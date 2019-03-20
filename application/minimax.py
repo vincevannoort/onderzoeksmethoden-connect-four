@@ -30,9 +30,12 @@ class Minimax:
         moves = legal_moves.items()
         random.shuffle(list(moves))
         for move, alpha in moves:
-            if alpha >= best_alpha:
+            if alpha > best_alpha:
                 best_alpha = alpha
-                best_move = move
+                best_move = [move]
+            elif alpha == best_alpha and best_alpha is not -99999999:
+              if (best_move is not None):
+                best_move.append(move)
         
         return best_move, best_alpha
         
