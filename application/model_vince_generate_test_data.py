@@ -21,7 +21,7 @@ class StateAfterMove:
     return f'{np.array2string(np.array(self.board.get_one_hot_array(self.player)))};{self.player.signature};{np.array2string(self.columns_to_play)};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  states_to_create = 5
+  states_to_create = 10
   games_created = 0
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{states_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_row_unbiased_classify_connect_four_game_{states_to_create}.txt', 'w') as unbiased_row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{states_to_create}.txt', 'w') as win_classify_file:
     # file header
@@ -107,6 +107,7 @@ if __name__ == '__main__':
     minimum_amount_of_states = len(min(list(states_per_column.values()), key=len))
     column_states_unbiased = []
     for column in states_per_column:
+      shuffle(states_per_column[column])
       for state in states_per_column[column][:minimum_amount_of_states]:
           column_states_unbiased.append(state)
 
