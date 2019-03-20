@@ -47,6 +47,25 @@ class Board:
       board_representation += '\n'
     print(board_representation)
 
+  def get_one_hot_array(self, player: Player):
+    def hole_to_array(hole, player: Player):
+      """
+      Generates one hot array from hole.
+      Empty hole        -> [1, 0, 0] 
+      Given player      -> [0, 1, 0] 
+      Not given player  -> [0, 0, 1]
+      """
+      return [
+        1 if hole is 0 else 0, # hole empty
+        1 if hole is player.signature else 0, # hole self
+        1 if hole is not player.signature and hole is not 0 else 0, # hole enemy
+      ]
+
+    board_representation = []
+    for hole in self.holes:
+      board_representation += hole_to_array(hole, player)
+    return board_representation
+
   def __str__(self):
     board_representation = ""
     for y in range(self.height):

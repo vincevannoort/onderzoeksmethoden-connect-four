@@ -13,7 +13,7 @@ inputs = width * height * 3
 Parse data
 """
 print(f'parse data.')
-with open('../data/data_generated/data_row_classify_connect_four_game_20.txt') as file:
+with open('../data/data_generated/data_row_classify_connect_four_game_40.txt') as file:
     content = file.readlines()
 
 data = [line.strip().split(";") for line in content[1:]] 
@@ -37,15 +37,16 @@ class Connect4KerasModel:
     self.model = Sequential([
       Dense(inputs, input_shape=(inputs,)),
       Activation('relu'),
-      Dense(inputs * 3),
+      Dense(inputs),
       Activation('relu'),
-      Dense(inputs * 3),
+      Dense(inputs),
       Activation('relu'),
       Dense(width),
       Activation('softmax'),
     ])
 
     self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    # top_k_categorical_accuracy
 
   def train(self, test_data, test_labels_one_hot):
     self.model.fit(test_data, test_labels_one_hot, epochs=15, batch_size=32)
@@ -54,6 +55,7 @@ class Connect4KerasModel:
 print(f'data & model ready, start training.')
 connect_four_model = Connect4KerasModel()
 connect_four_model.train(test_data, test_labels_one_hot)
+connect_four_model.model.save('connect_four_model_vince.h5')
 input = test_data[0]
 prediction = connect_four_model.model.predict(np.array([input,]))
 print(prediction)
