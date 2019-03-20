@@ -1,6 +1,7 @@
 *.csv
 .DS_Store
 model_logs
+*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
