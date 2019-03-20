@@ -1,6 +1,7 @@
 from copy import deepcopy
 from random import choice
 from termcolor import colored
+import numpy as np
 
 class Player:
   def __init__(self, name: str, signature: int):
@@ -37,6 +38,13 @@ class Board:
       if self.get_hole(column, 0) is 0:
         possible_columns.append(column)
     return possible_columns
+
+  def get_possible_columns_as_one_hot_array(self):
+    possible_columns = self.get_possible_columns()
+    possible_columns_one_hot_array = np.zeros(7)
+    for possible_column in possible_columns:
+      np.put(possible_columns_one_hot_array, possible_column, 1)
+    return possible_columns_one_hot_array
 
   def print_with_colors(self, first_player_signature, second_player_signature):
     board_representation = " 1  2  3  4  5  6  7 \n"
@@ -81,6 +89,9 @@ class ConnectFour:
     self.first_player = first_player
     self.second_player = second_player
     self.current_player = choice([first_player, second_player])
+
+  def reset(self):
+    self.__init__(self.first_player, self.second_player)
 
   def switch_player(self, player: Player):
     return self.second_player if self.current_player is self.first_player else self.first_player
@@ -154,7 +165,7 @@ class ConnectFour:
       self.board.set_column(column, self.current_player)
       self.current_player = self.switch_player(self.current_player)
     else:
-      print("Board is full. No moves can be set.")
+      raise Exception("Board is full. No moves can be set.")
 
 
   def __str__(self):

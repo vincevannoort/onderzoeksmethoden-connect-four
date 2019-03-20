@@ -13,21 +13,12 @@ inputs = width * height * 3
 Parse data
 """
 print(f'parse data.')
-with open('../data/data_generated/data_row_classify_connect_four_game_40.txt') as file:
+with open('../data/data_generated/data_row_unbiased_classify_connect_four_game_5_overfit.txt') as file:
     content = file.readlines()
 
 data = [line.strip().split(";") for line in content[1:]] 
-test_data = np.array([np.array(literal_eval(data_item[0])) for data_item in data])
-test_labels = np.array([int(data_item[2]) for data_item in data])
-test_labels_one_hot = np.zeros((test_labels.size, 7))
-for index, test_label in enumerate(test_labels):
-  label = test_labels[index]
-  test_labels_one_hot[index][label] = 1
-
-print(test_labels[0])
-print(test_labels_one_hot[0])
-print(test_labels[1])
-print(test_labels_one_hot[1])
+train_data = np.array([ np.fromstring(data_item[0][1:-1], dtype=int, sep=' ') for data_item in data ])
+train_labels = np.array([ np.fromstring(data_item[2][1:-1], sep=' ') for data_item in data ])
 
 """
 Setup model
@@ -48,15 +39,15 @@ class Connect4KerasModel:
     self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     # top_k_categorical_accuracy
 
-  def train(self, test_data, test_labels_one_hot):
-    self.model.fit(test_data, test_labels_one_hot, epochs=15, batch_size=32)
+  def train(self, train_data, train_labels):
+    self.model.fit(train_data, train_labels, epochs=15, batch_size=32)
 
 
 print(f'data & model ready, start training.')
 connect_four_model = Connect4KerasModel()
-connect_four_model.train(test_data, test_labels_one_hot)
+connect_four_model.train(train_data, train_labels)
 connect_four_model.model.save('connect_four_model_vince.h5')
-input = test_data[0]
+input = train_data[0]
 prediction = connect_four_model.model.predict(np.array([input,]))
 print(prediction)
 print(np.argmax(prediction))
