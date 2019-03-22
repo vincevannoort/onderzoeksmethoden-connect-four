@@ -12,7 +12,7 @@ from random import choice
 Settings
 """
 MODEL_PATH = '../data/models'
-MODEL_NUMBER = 20
+MODEL_NUMBER = 23
 
 def predict_board(column:int, board: Board, model, player: Player):
   board = np.array([board.get_one_hot_array(player)])

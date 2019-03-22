@@ -5,8 +5,13 @@ from copy import copy
 import numpy as np
 np.set_printoptions(linewidth=500)
 
+"""
+Settings
+"""
+AMOUNT_TO_CREATE = 100000
+
 class StateAfterMove:
-  def __init__(self, board: Board, player: Player, column_played: int, game_won: bool):
+  def __init__(self, board: Board, player: Player, column_played: int, game_won: Player):
     self.board = board
     self.player = player
     self.column_played = column_played
@@ -16,25 +21,24 @@ class StateAfterMove:
     return f"{np.array(self.board.get_one_hot_array(self.player))};{self.player.signature};{self.column_played};{True if self.game_won else False}"
 
 if __name__ == "__main__":
-  amount_to_create = 500000
   games_created = 0
   amount_bot_won = 0
   amount_opposite_won = 0
   amount_draws = 0
-  with open(f"../data/data_generated/data_win_classify_connect_four_game_{amount_to_create}.txt", "w") as win_classify_file:
+  with open(f"../data/data_generated/data_win_classify_connect_four_game_{AMOUNT_TO_CREATE}.txt", "w") as win_classify_file:
     # file header
     win_classify_file.write(f"board representation;signature;column_played;game_ended;bot_won\n")
       
     bot = Player("Bot", 'A')
     opposite = Player("Opposite", 'B')
-    while (games_created < amount_to_create):
+    while (games_created < AMOUNT_TO_CREATE):
       connect_four = ConnectFour(bot, opposite)
       all_states = list()
       while True:
         column_to_play = choice(connect_four.board.get_possible_columns())
         connect_four.move(column_to_play)
 
-        state_after_move = StateAfterMove(copy(connect_four.board), connect_four.current_player, column_to_play, connect_four.has_won())
+        state_after_move = StateAfterMove(copy(connect_four.board), bot, column_to_play, connect_four.has_won())
 
         all_states.append(state_after_move)
         
@@ -58,6 +62,6 @@ if __name__ == "__main__":
 
       games_created += 1
       if games_created % 1000 is 0:
-        print(f"progress: {games_created}/{amount_to_create}.")
+        print(f"progress: {games_created}/{AMOUNT_TO_CREATE}.")
 
   print(f"Games won by bot:{amount_bot_won}. Games won by opposite:{amount_opposite_won}. Games ended in draw: {amount_draws}")

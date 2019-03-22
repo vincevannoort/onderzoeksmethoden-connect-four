@@ -33,11 +33,15 @@ class Model:
     """
     Keras Model
     """
+
+
     model = keras.Sequential([
       keras.layers.Flatten(input_shape=(self.height, self.width, 3)),
-      keras.layers.Dense(self.size, activation=tf.nn.relu, bias_regularizer=keras.regularizers.l1(0.01)),
       keras.layers.Dense(self.size, activation=tf.nn.relu),
       keras.layers.Dense(self.size, activation=tf.nn.relu),
+      keras.layers.Dropout(0.5),
+      keras.layers.Dense(self.size, activation=tf.nn.relu),
+      keras.layers.Dropout(0.5),
       keras.layers.Dense(self.size, activation=tf.nn.relu),
       keras.layers.Dense(1, activation=tf.nn.sigmoid),
     ])
@@ -49,7 +53,6 @@ class Model:
     self.model = model
 
   def retrieve_data(self, input_path:str):
-    # input_path: 'data_from_internet/c4_game_database.csv'
     with open(f"../data/{input_path}") as txtfile:
       data = txtfile.readlines()
       return data
@@ -70,7 +73,7 @@ class Model:
     return keras.callbacks.TensorBoard(log_dir=f'{self.log_path}/model_jort_{self.model_number}', histogram_freq=0, write_graph=True, write_images=True)
 
   def train(self, tensorboard, train_data:list, test_data:list):
-    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[tensorboard], validation_split=0.1, batch_size=64)
+    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[tensorboard], validation_split=0.1, batch_size=128)
 
   def save(self):
     self.model.save(f"{self.model_path}/model_jort_{self.model_number}.h5")
