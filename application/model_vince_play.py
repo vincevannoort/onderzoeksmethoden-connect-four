@@ -29,8 +29,8 @@ Game loop
 """
 games_won = 0;
 games_lost = 0;
-games_total = 1000;
-while (games_won + games_lost) < 1000:
+games_total = 10000;
+while (games_won + games_lost) < games_total:
   try:
     if connect_four.current_player is first_player:
       prediction = model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
@@ -41,7 +41,6 @@ while (games_won + games_lost) < 1000:
       column = np.argmax(prediction)
       connect_four.move(column)
     else:
-
       if second_player_type == 'player':
         while True:
           try:

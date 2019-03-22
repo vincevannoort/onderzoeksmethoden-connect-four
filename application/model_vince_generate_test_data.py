@@ -1,9 +1,11 @@
 from connect_four import ConnectFour, Board, Player
-from random import choice, shuffle
+from random import choice, shuffle, uniform
 from copy import copy
 import readchar
 import os
 import numpy as np
+from minimax import Minimax
+
 np.set_printoptions(linewidth = 300);
 
 def cls():
@@ -21,7 +23,7 @@ class StateAfterMove:
     return f'{np.array2string(np.array(self.board.get_one_hot_array(self.player)))};{self.player.signature};{np.array2string(self.columns_to_play)};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  states_to_create = 5
+  states_to_create = 10
   games_created = 0
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{states_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_row_unbiased_classify_connect_four_game_{states_to_create}.txt', 'w') as unbiased_row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{states_to_create}.txt', 'w') as win_classify_file:
     # file header
@@ -29,7 +31,9 @@ if __name__ == '__main__':
     win_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
       
     bot = Player('Bot', 'B')
+    alpha_bot = 1
     opposite = Player('Opposite', 'O')
+    alpha_opposite = 0.4
 
     # states
     all_states = list()
@@ -47,33 +51,31 @@ if __name__ == '__main__':
 
       while True:
         current_player = connect_four.current_player
+        opposite_player = connect_four.switch_player(connect_four.current_player)
         possible_columns = connect_four.board.get_possible_columns()
 
         # stop if the game ended in a draw
         if connect_four.is_draw():
-          # write all states for opposite
-          for state in all_states:
-            win_classify_file.write(f'{state};{0.5}\n')
           break
 
-        cls()
-        connect_four.board.print_with_colors(bot.signature, opposite.signature)
-        while True:
-          try:
-            for column in states_per_column:
-              print(f'States per column {column}: {len(states_per_column[column])}')
-            print(f'Player: {current_player.name}, select column ( 1 - 7 )?')
-            column_to_play = int(readchar.readkey()) - 1
-            if (column_to_play > 6):
-              raise Exception("Not a valid column")
-            break
-          except:
-            print('Not a valid number, try again')
-        # if (current_player is bot):
-        # else:
-        #   column_to_play = choice(connect_four.board.get_possible_columns())
+        if current_player is bot:
+          # minimax with a chance of alpha_bot %
+          if uniform(0, 1) <= alpha_bot:
+            mini_max = Minimax(connect_four.board)
+            (column_to_play, _) = mini_max.best_move(4, connect_four.board, current_player, opposite_player)
+          else:
+            column_to_play = choice(possible_columns)
+        else:
+          # minimax with a chance of opposite_bot %
+          if uniform(0, 1) <= alpha_opposite:
+            mini_max = Minimax(connect_four.board)
+            (column_to_play, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
+          else:
+            column_to_play = choice(possible_columns)
           
         connect_four.move(column_to_play)
+        print(f'column played: {column_to_play}')
+        connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
 
         # setup a dict of states_per_player per player, since we only need the states_per_player from the winning player
         state_after_player_move = StateAfterMove(copy(connect_four.board), current_player, column_to_play, connect_four.has_won())
@@ -107,6 +109,7 @@ if __name__ == '__main__':
     minimum_amount_of_states = len(min(list(states_per_column.values()), key=len))
     column_states_unbiased = []
     for column in states_per_column:
+      shuffle(states_per_column[column])
       for state in states_per_column[column][:minimum_amount_of_states]:
           column_states_unbiased.append(state)
 
