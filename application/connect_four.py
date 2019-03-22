@@ -147,7 +147,7 @@ class ConnectFour:
   def can_move(self, column: int):
     return self.board.get_hole(column, 0) is 0
 
-  def possible_boards(self, player: Player):
+  def possible_boards_columns(self, player: Player):
     """
     Returns a list of (column, board)
     """
@@ -155,10 +155,16 @@ class ConnectFour:
     column_and_boards = []
     for column in range(self.board.width):
       if (self.can_move(column)):
-        self.move(player, column)
+        self.fake_move(column)
         column_and_boards.append((column, self.board))
         self.board = deepcopy(temp_board)
     return column_and_boards
+
+  def fake_move(self, column: int):
+    if self.can_move(column):
+      self.board.set_column(column, self.current_player)
+    else:
+      raise Exception("Board is full. No moves can be set.")
 
   def move(self, column: int):
     if self.can_move(column):

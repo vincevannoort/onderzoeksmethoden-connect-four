@@ -2,6 +2,9 @@ from connect_four import ConnectFour, Board, Player
 from random import choice
 from copy import copy
 
+import numpy as np
+np.set_printoptions(linewidth=500)
+
 class StateAfterMove:
   def __init__(self, board: Board, player: Player, column_played: int, game_won: bool):
     self.board = board
@@ -10,10 +13,10 @@ class StateAfterMove:
     self.game_won = game_won
 
   def __str__(self):
-    return f"{self.board.get_one_hot_array(self.player)};{self.player.signature};{self.column_played};{True if self.game_won else False}"
+    return f"{np.array(self.board.get_one_hot_array(self.player))};{self.player.signature};{self.column_played};{True if self.game_won else False}"
 
 if __name__ == "__main__":
-  amount_to_create = 10000
+  amount_to_create = 500000
   games_created = 0
   amount_bot_won = 0
   amount_opposite_won = 0
@@ -35,7 +38,6 @@ if __name__ == "__main__":
 
         all_states.append(state_after_move)
         
-
         won_player = connect_four.has_won()
         # Stop if game is won by one of the two players
         if (won_player is not None):
