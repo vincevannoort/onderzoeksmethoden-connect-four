@@ -8,7 +8,7 @@ np.set_printoptions(linewidth=500)
 """
 Settings
 """
-AMOUNT_TO_CREATE = 100000
+AMOUNT_TO_CREATE = 300000
 
 class StateAfterMove:
   def __init__(self, board: Board, player: Player, column_played: int, game_won: Player):
