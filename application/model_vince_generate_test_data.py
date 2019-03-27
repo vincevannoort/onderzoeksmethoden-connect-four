@@ -23,7 +23,7 @@ class StateAfterMove:
     return f'{np.array2string(np.array(self.board.get_one_hot_array(self.player)))};{self.player.signature};{np.array2string(self.columns_to_play)};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  states_to_create = 15
+  states_to_create = 10
   games_created = 0
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{states_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_row_unbiased_classify_connect_four_game_{states_to_create}.txt', 'w') as unbiased_row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{states_to_create}.txt', 'w') as win_classify_file:
     # file header
@@ -31,16 +31,19 @@ if __name__ == '__main__':
     win_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
       
     bot = Player('Bot', 'B')
-    alpha_bot = 1
+    alpha_bot = 0.9
     opposite = Player('Opposite', 'O')
-    alpha_opposite = 0.4
+    alpha_opposite = 0.9
 
     # states
     all_states = list()
     states_per_player = dict()
     states_per_column = dict()
+    states_per_outcome = dict()
 
     # initialise dicts to not check if in dict
+    states_per_outcome['win'] = []
+    states_per_outcome['loss'] = []
     states_per_player[bot] = []
     states_per_player[opposite] = []
     for i in range(7):
@@ -48,12 +51,16 @@ if __name__ == '__main__':
 
     while (len(min(list(states_per_column.values()), key=len)) <= states_to_create):
       connect_four = ConnectFour(bot, opposite)
+      local_states_per_player = dict()
+      local_states_per_player[bot] = []
+      local_states_per_player[opposite] = []
+      states_from_bot = dict()
+      for i in range(7):
+        states_from_bot[i] = []
 
       initialise_board_amount = randint(0, 10)
       for _ in range(initialise_board_amount):
         connect_four.move(choice(connect_four.board.get_possible_columns()))
-      print('begin board:')
-      connect_four.board.print_with_colors(connect_four.current_player.signature, connect_four.switch_player(connect_four.current_player))
 
       while True:
         current_player = connect_four.current_player
@@ -76,16 +83,13 @@ if __name__ == '__main__':
           # minimax with a chance of opposite_bot %
           if uniform(0, 1) <= alpha_opposite:
             mini_max = Minimax(connect_four.board)
-            (best_moves, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
+            (best_moves, _) = mini_max.best_move(4, connect_four.board, current_player, opposite_player)
             column_to_play = choice(best_moves)
           else:
             column_to_play = choice(possible_columns)
           
         connect_four.move(column_to_play)
         # print(f'column played: {column_to_play}')
-        # for column in states_per_column:
-        #   print(f'column {column}: count {len(states_per_column[column])}')
-        connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
 
         # setup a dict of states_per_player per player, since we only need the states_per_player from the winning player
         state_after_player_move = StateAfterMove(copy(connect_four.board), current_player, column_to_play, connect_four.has_won())
@@ -95,32 +99,61 @@ if __name__ == '__main__':
 
         # for bot
         states_per_player[current_player].append(state_after_player_move)
+        local_states_per_player[current_player].append(state_after_player_move)
+        print(f'append state for {current_player.name}')
         
         if (current_player is bot):
-          states_per_column[column_to_play].append(state_after_player_move)
+          states_from_bot[column_to_play].append(state_after_player_move)
 
         won_player = connect_four.has_won()
         if (won_player is not None):
           if (won_player is bot):
+            print(f'bot won!')
             games_created += 1
-          break
+            for column in states_from_bot:
+              states_per_column[column] += states_from_bot[column]
+          else:
+            print(f'opposite won!')
 
-      if games_created % 1000 is 0:
-        print(f'progress: {games_created}/{states_to_create}.')
+          # amount of states per column
+          print(f'states per column:')
+          for column in states_per_column:
+            print(f'{len(states_per_column[column])}', end=' ')
+          print()
+          connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
+
+          # amount of states per outcome
+          loss_player = connect_four.switch_player(won_player)
+          if (won_player is bot):
+            states_per_outcome['win'] += local_states_per_player[won_player]
+          else:
+            states_per_outcome['loss'] += local_states_per_player[loss_player]
+          print(f'states per outcome:')
+          for column in states_per_outcome:
+            print(f'{len(states_per_outcome[column])}', end=' ')
+          print()
+          
+
+          # write files to game for jort
+          break
     
     # TODO: add to state which player has won
-    for state in all_states:
-      win_classify_file.write(f'{state};\n')
+    minimum_amount_of_outcomes = len(min(list(states_per_outcome.values()), key=len))
+    print(f'minimum_amount_of_outcomes: {minimum_amount_of_outcomes}')
+    for outcome in states_per_outcome:
+      for state in states_per_outcome[outcome][:minimum_amount_of_outcomes]:
+        win_classify_file.write(f'{state};{0 if outcome is "loss" else 1}\n')
 
     for player in states_per_player:
       for state in states_per_player[player]:
           row_classify_file.write(f'{state};\n')
         
-    minimum_amount_of_states = len(min(list(states_per_column.values()), key=len))
+    minimum_amount_of_column = len(min(list(states_per_column.values()), key=len))
+    print(f'minimum_amount_of_column: {minimum_amount_of_column}')
     column_states_unbiased = []
     for column in states_per_column:
       shuffle(states_per_column[column])
-      for state in states_per_column[column][:minimum_amount_of_states]:
+      for state in states_per_column[column][:minimum_amount_of_column]:
           column_states_unbiased.append(state)
 
     shuffle(column_states_unbiased)
