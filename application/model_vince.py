@@ -14,7 +14,7 @@ inputs = width * height * 3
 """
 Parse data
 """
-print(f'parse data.')
+# print(f'parse data.')
 with open('../data/data_generated/data_row_unbiased_classify_connect_four_game_100_overfit.txt') as file:
     content = file.readlines()
 
@@ -59,7 +59,7 @@ class Connect4KerasModel:
     self.model.fit(train_data, train_labels, epochs=5, batch_size=64, validation_split=0.05)
 
 
-print(f'data & model ready, start training.')
+# print(f'data & model ready, start training.')
 connect_four_model = Connect4KerasModel()
 connect_four_model.train(train_data, train_labels)
 connect_four_model.model.save('connect_four_model_vince_unbiased.h5')
