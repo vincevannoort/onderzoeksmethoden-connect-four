@@ -56,6 +56,8 @@ class Connect4KerasModel:
     # self.model.compile(optimizer='adam', loss='poisson', metrics=['accuracy'])
 
   def train(self, train_data, train_labels):
+    config = tf.ConfigProto(device_count={"CPU": 8})
+    keras.backend.tensorflow_backend.set_session(tf.Session(config=config))
     self.model.fit(train_data, train_labels, epochs=5, batch_size=64, validation_split=0.05)
 
 
