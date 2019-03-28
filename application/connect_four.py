@@ -40,13 +40,27 @@ class Player:
         try:
           connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
           print(f'Player: {current_player.name}, select column ( 1 - 7 )?')
-          column_to_play = int(readchar.readkey()) - 1
+          column_to_play = int(readchar.readchar()) - 1
           break
         except:
           print('Not a valid number, try again')
+          self.get_move(connect_four, model)
 
     elif self.type is 'model_jort':
-      raise Exception('not implemented yet.')
+      def predict_board(column, board, model, player):
+        np_board = np.array([board.get_one_hot_array(player)])
+        np_board = np.reshape(np_board, (1, board.height, board.width, 3))
+        prediction = model.predict(np_board) 
+        # Convert [[0.4]] -> 0.4
+        prediction = prediction[0][0]
+        return prediction
+
+      possible_boards_columns = connect_four.possible_boards_columns(current_player)
+      # When predictions are the same doesn't pick the same column all the time.
+      shuffle(possible_boards_columns)      
+      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, model, current_player))
+      
+      column_to_play = best_column
 
     elif self.type is 'model_vince':
       board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))

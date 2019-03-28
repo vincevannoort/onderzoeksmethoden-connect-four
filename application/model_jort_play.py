@@ -11,25 +11,15 @@ from random import choice, shuffle
 """
 Settings
 """
-MODEL_PATH = '../data/models'
-MODEL_NUMBER = 12
-
-def predict_board(column:int, board: Board, model, player: Player):
-  board = np.array([board.get_one_hot_array(player)])
-  board = np.reshape(board, (1, 6, 7, 3))
-  prediction = model.predict(board)
-  # Convert [[0.4]] -> 0.4
-  prediction = prediction[0][0]
-  # print(prediction)
-  return prediction
-    
-
+MODEL_PATH = '../models/trained_with_random'
+MODEL_NUMBER = 0
+  
 print("Start loading model")
 model = keras.models.load_model(f"{MODEL_PATH}/model_jort_{MODEL_NUMBER}.h5")
 print("Finished loading model")
 
-first_player = Player("Bot", 'B')
-second_player = Player("Player", 'S')
+first_player = Player("Bot", 'B', "model_jort")
+second_player = Player("Player", 'S', "player")
 connect_four = ConnectFour(first_player, second_player)
 
 """
@@ -42,16 +32,7 @@ amount_won_random = 0
 while(amount_of_games < 1000):
   while True:
     # print(f"move from: {connect_four.current_player.name}.")
-    if(connect_four.current_player is first_player):
-      possible_boards_columns = connect_four.possible_boards_columns(first_player)
-      shuffle(possible_boards_columns)
-      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, model, first_player))
-      # print(best_column)
-      connect_four.move(best_column)
-    else:
-      # move = int(input("Input move: "))
-      move = choice(connect_four.board.get_possible_columns())
-      connect_four.move(move)
+    connect_four.current_player.play_move(connect_four, model)
 
     won_player = connect_four.has_won()
     if(won_player is not None):
