@@ -105,7 +105,7 @@ class Model:
           offset += batch_size       
 
   def train(self, train_data:list, test_data:list):
-    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[self.tensorboard], validation_split=0.1, batch_size=64, use_multiprocessing=True)
+    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[self.tensorboard], validation_split=0.05, batch_size=64, use_multiprocessing=True)
 
   def train_batch(self, train_data_batch:list, train_label_batch:list):
     self.model.train_on_batch(train_data_batch, train_label_batch)
@@ -126,13 +126,10 @@ class Model:
     return predictions
 
 if __name__ == "__main__":
-  model = Model(6, 7, '../data/model_logs', '../data/models')
-  input_path = 'data_generated/data_win_classify_connect_four_game_100000.txt'
-  amount_lines = model.get_length_data(input_path)
-  model.train_generator(input_path, 64, amount_lines)
-  # data = model.retrieve_data('data_generated/data_win_classify_connect_four_game_100000.txt')
-  # (train_data, train_labels) = model.convert_data(data)
-  # print("Starting with training model")
-  # model.train(train_data, train_labels)
+  model = Model(6, 7, '../data/model_logs', '../models/trained_with_random')
+  data = model.retrieve_data('data_generated/data_win_classify_connect_four_game_moves_500000.txt')
+  (train_data, train_labels) = model.convert_data(data)
+  print("Starting with training model")
+  model.train(train_data, train_labels)
   model.save()
-  # model.predict(np.array(train_data[0:35]), np.array(train_labels[0:35]))
+  model.predict(np.array(train_data[0:35]), np.array(train_labels[0:35]))
