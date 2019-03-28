@@ -6,7 +6,3 @@
     bot won:        149903
     opposite won:   149332
     draw:           765
-500.000 moves:
-    moves bot won:      246149
-    moves opposite won: 251079
-    moves draw:         2772
