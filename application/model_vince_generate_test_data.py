@@ -23,8 +23,7 @@ class StateAfterMove:
     return f'{np.array2string(np.array(self.board.get_one_hot_array(self.player)))};{self.player.signature};{np.array2string(self.columns_to_play)};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  states_to_create = 10
-  games_created = 0
+  states_to_create = 500
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{states_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_row_unbiased_classify_connect_four_game_{states_to_create}.txt', 'w') as unbiased_row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{states_to_create}.txt', 'w') as win_classify_file:
     # file header
     row_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
@@ -38,6 +37,7 @@ if __name__ == '__main__':
     # states
     all_states = list()
     states_per_player = dict()
+    states_per_player_per_column = dict()
     states_per_column = dict()
     states_per_outcome = dict()
 
@@ -46,21 +46,28 @@ if __name__ == '__main__':
     states_per_outcome['loss'] = []
     states_per_player[bot] = []
     states_per_player[opposite] = []
+    states_per_player_per_column[bot] = dict()
+    states_per_player_per_column[opposite] = dict()
     for i in range(7):
+      states_per_player_per_column[bot][i] = []
+      states_per_player_per_column[opposite][i] = []
       states_per_column[i] = []
 
-    while (len(min(list(states_per_column.values()), key=len)) <= states_to_create):
+    while (len(min(list(states_per_column.values()), key=len)) < states_to_create):
       connect_four = ConnectFour(bot, opposite)
       local_states_per_player = dict()
       local_states_per_player[bot] = []
       local_states_per_player[opposite] = []
-      states_from_bot = dict()
+      states_from_player_per_column = dict()
+      states_from_player_per_column[bot] = dict()
+      states_from_player_per_column[opposite] = dict()
       for i in range(7):
-        states_from_bot[i] = []
+        states_from_player_per_column[bot][i] = []
+        states_from_player_per_column[opposite][i] = []
 
-      initialise_board_amount = randint(0, 10)
-      for _ in range(initialise_board_amount):
-        connect_four.move(choice(connect_four.board.get_possible_columns()))
+      # initialise_board_amount = randint(0, 10)
+      # for _ in range(initialise_board_amount):
+      #   connect_four.move(choice(connect_four.board.get_possible_columns()))
 
       while True:
         current_player = connect_four.current_player
@@ -69,6 +76,7 @@ if __name__ == '__main__':
 
         # stop if the game ended in a draw
         if connect_four.is_draw():
+          print(f'draw!')
           break
 
         if current_player is bot:
@@ -102,16 +110,15 @@ if __name__ == '__main__':
         local_states_per_player[current_player].append(state_after_player_move)
         print(f'append state for {current_player.name}')
         
-        if (current_player is bot):
-          states_from_bot[column_to_play].append(state_after_player_move)
+        states_from_player_per_column[current_player][column_to_play].append(state_after_player_move)
 
         won_player = connect_four.has_won()
         if (won_player is not None):
+          for column in states_from_player_per_column[won_player]:
+            states_per_column[column] += states_from_player_per_column[won_player][column]
+
           if (won_player is bot):
             print(f'bot won!')
-            games_created += 1
-            for column in states_from_bot:
-              states_per_column[column] += states_from_bot[column]
           else:
             print(f'opposite won!')
 
@@ -128,12 +135,6 @@ if __name__ == '__main__':
             states_per_outcome['win'] += local_states_per_player[won_player]
           else:
             states_per_outcome['loss'] += local_states_per_player[loss_player]
-          print(f'states per outcome:')
-          for column in states_per_outcome:
-            print(f'{len(states_per_outcome[column])}', end=' ')
-          print()
-          
-
           # write files to game for jort
           break
     
