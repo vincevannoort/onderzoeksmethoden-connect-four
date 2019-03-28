@@ -24,8 +24,8 @@ class StateAfterMove:
 
 if __name__ == '__main__':
   # settings
-  states_to_create = 1
-  type = 'minimax' # random or minimax
+  states_to_create = 71428
+  type = 'random' # random or minimax
 
   # generator
   with open(f'../data/{type}/data_unbiased_column_states_connect_four_game_{states_to_create}.txt', 'w') as unbiased_column_states_file, open(f'../data/{type}/data_unbiased_winloss_states_connect_four_game_{states_to_create}.txt', 'w') as unbiased_winloss_states_file:

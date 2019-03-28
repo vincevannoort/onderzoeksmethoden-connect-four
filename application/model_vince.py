@@ -21,6 +21,7 @@ shuffle(data)
 train_data = np.array([ np.fromstring(data_item[0][1:-1], dtype=int, sep=' ') for data_item in data ])
 train_data = np.array([np.reshape(board, (height, width, 3)) for board in train_data])
 train_labels = np.array([ np.fromstring(data_item[2][1:-1], sep=' ') for data_item in data ])
+print(train_data[0])
 
 """
 Setup model
