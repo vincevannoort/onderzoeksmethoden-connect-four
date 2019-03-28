@@ -4,6 +4,7 @@ from termcolor import colored
 from minimax import Minimax
 import numpy as np
 from random import choice, shuffle, uniform, randint
+import readchar
 
 class Player:
   def __init__(self, name: str, signature: int, type: str, alpha=1):

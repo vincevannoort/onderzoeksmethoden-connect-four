@@ -23,7 +23,7 @@ model = keras.models.load_model(f"connect_four_model_vince_unbiased.h5")
 print("Finished loading model")
 
 first_player = Player("Bot", "B", "model_vince")
-second_player = Player("Opposite", "O", "random")
+second_player = Player("Opposite", "O", "player")
 connect_four = ConnectFour(first_player, second_player)
 connect_four.current_player = first_player
 
@@ -32,7 +32,7 @@ Game loop
 """
 games_won = 0;
 games_lost = 0;
-games_total = 1;
+games_total = 100;
 while (games_won + games_lost) < games_total:
   cls()
   connect_four.board.print_with_colors(first_player.signature, second_player.signature)
