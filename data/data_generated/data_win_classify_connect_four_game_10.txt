@@ -1,1 +1,0 @@
-board representation;signature;column_played;game_ended;bot_won
