@@ -10,11 +10,11 @@ from random import choice
 class Minimax:
     """ Minimax object that takes a current connect four board state
     """
-    def __init__(self, board: Board):
+    def __init__(self, board):
         # deepcopy the board to self.board
         self.board = board
             
-    def best_move(self, depth, board: Board, current_player: Player, opposite_player: Player):
+    def best_move(self, depth, board, current_player, opposite_player):
         """ Returns the best move (as a column number) and the associated alpha
             Calls search()
         """
@@ -39,7 +39,7 @@ class Minimax:
         
         return best_move, best_alpha
         
-    def search(self, depth, board: Board, current_player: Player, opposite_player: Player):
+    def search(self, depth, board, current_player, opposite_player):
         """ Searches the tree at depth 'depth'
             By default, the state is the board, and curr_player is whomever 
             called this search
@@ -62,7 +62,7 @@ class Minimax:
             alpha = max(alpha, -self.search(depth-1, legal_board, opposite_player, current_player))
         return alpha
     
-    def game_is_over(self, board: Board, current_player: Player, opposite_player: Player):
+    def game_is_over(self, board, current_player, opposite_player):
         if self.check_for_streak(board, current_player, 4) >= 1:
             return True
         elif self.check_for_streak(board, opposite_player, 4) >= 1:
@@ -70,7 +70,7 @@ class Minimax:
         else:
             return False
 
-    def value(self, board, current_player: Player, opposite_player: Player):
+    def value(self, board, current_player, opposite_player):
         """ Simple heuristic to evaluate board configurations
             Heuristic is (num of 4-in-a-rows)*99999 + (num of 3-in-a-rows)*100 + 
             (num of 2-in-a-rows)*10 - (num of opponent 4-in-a-rows)*99999 - (num of opponent
@@ -85,7 +85,7 @@ class Minimax:
         else:
             return my_fours*100000 + my_threes*100 + my_twos
             
-    def check_for_streak(self, board: Board, current_player: Player, streak):
+    def check_for_streak(self, board, current_player, streak):
         count = 0
         for i in range(6):
             for j in range(7):
@@ -96,7 +96,7 @@ class Minimax:
 
         return count
             
-    def vertical_streak(self, row, col, board: Board, streak):
+    def vertical_streak(self, row, col, board, streak):
         consecutiveCount = 0
         for i in range(row, 6):
             if board.get_hole(col, i) == board.get_hole(col, row):
@@ -109,7 +109,7 @@ class Minimax:
         else:
             return 0
     
-    def horizontal_streak(self, row, col, board: Board, streak):
+    def horizontal_streak(self, row, col, board, streak):
         consecutiveCount = 0
         for j in range(col, 7):
             if board.get_hole(j, row) == board.get_hole(col, row):
@@ -122,7 +122,7 @@ class Minimax:
         else:
             return 0
     
-    def diagonal_check(self, row, col, board: Board, streak):
+    def diagonal_check(self, row, col, board, streak):
         total = 0
         # check for diagonals with positive slope
         consecutiveCount = 0

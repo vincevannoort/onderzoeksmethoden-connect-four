@@ -1,15 +1,52 @@
 from copy import deepcopy
 from random import choice
 from termcolor import colored
+from minimax import Minimax
 import numpy as np
+from random import choice, shuffle, uniform, randint
 
 class Player:
-  def __init__(self, name: str, signature: int):
+  def __init__(self, name: str, signature: int, type: str, alpha=1):
     self.name = name
     self.signature = signature
+    self.type = type
+    self.alpha = alpha
 
   def __str__(self):
     return self.name
+
+  def get_move(self, connect_four):
+    current_player = connect_four.current_player
+    opposite_player = connect_four.switch_player(connect_four.current_player)
+    
+    if self.type is 'random':
+      column_to_play = choice(connect_four.board.get_possible_columns())
+
+    elif self.type is 'minimax':
+      if uniform(0, 1) <= self.alpha:
+        mini_max = Minimax(connect_four.board)
+        (best_moves, _) = mini_max.best_move(4, connect_four.board, current_player, opposite_player)
+        column_to_play = choice(best_moves)
+      else:
+        column_to_play = choice(possible_columns)
+
+    elif self.type is 'player':
+      while True:
+        try:
+          connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
+          print(f'Player: {current_player.name}, select column ( 1 - 7 )?')
+          column_to_play = int(readchar.readkey()) - 1
+          break
+        except:
+          print('Not a valid number, try again')
+
+    elif self.type is 'model_jort':
+      raise Exception('not implemented yet.')
+
+    elif self.type is 'model_vince':
+      raise Exception('not implemented yet.')
+
+    return column_to_play
 
 class Board:
   def __init__(self):
