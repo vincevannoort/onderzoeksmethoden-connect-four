@@ -33,8 +33,8 @@ if __name__ == '__main__':
     unbiased_column_states_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
     unbiased_winloss_states_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
       
-    bot = Player('Bot', 'B', type)
-    opposite = Player('Opposite', 'O', type)
+    bot = Player('Bot', 'B', 'random')
+    opposite = Player('Opposite', 'O', 'random')
 
     # states
     all_states = list()
@@ -76,7 +76,6 @@ if __name__ == '__main__':
         if connect_four.is_draw():
           print(f'draw!')
           break
-
 
         column_to_play = connect_four.current_player.get_move(connect_four)
         connect_four.move(column_to_play)

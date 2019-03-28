@@ -15,10 +15,14 @@ class Player:
   def __str__(self):
     return self.name
 
-  def get_move(self, connect_four):
+  def play_move(self, connect_four, model=None):
+    column_to_play = self.get_move(connect_four, model)
+    connect_four.move(column_to_play)
+
+  def get_move(self, connect_four, model=None):
     current_player = connect_four.current_player
     opposite_player = connect_four.switch_player(connect_four.current_player)
-    
+
     if self.type is 'random':
       column_to_play = choice(connect_four.board.get_possible_columns())
 
@@ -44,7 +48,14 @@ class Player:
       raise Exception('not implemented yet.')
 
     elif self.type is 'model_vince':
-      raise Exception('not implemented yet.')
+      board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))
+      board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 3))
+      prediction = model.predict(np.array([board_representation,]))
+      possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
+      for index, possible in enumerate(possible_columns.tolist()):
+        if (int(possible) is 0):
+          np.put(prediction, index, 0)
+      column_to_play = np.argmax(prediction)
 
     return column_to_play
 
