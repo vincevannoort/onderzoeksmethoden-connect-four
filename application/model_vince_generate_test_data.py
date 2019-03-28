@@ -23,7 +23,7 @@ class StateAfterMove:
     return f'{np.array2string(np.array(self.board.get_one_hot_array(self.player)))};{self.player.signature};{np.array2string(self.columns_to_play)};{True if self.game_won else False}'
 
 if __name__ == '__main__':
-  states_to_create = 500
+  states_to_create = 2500
   with open(f'../data/data_generated/data_row_classify_connect_four_game_{states_to_create}.txt', 'w') as row_classify_file, open(f'../data/data_generated/data_row_unbiased_classify_connect_four_game_{states_to_create}.txt', 'w') as unbiased_row_classify_file, open(f'../data/data_generated/data_win_classify_connect_four_game_{states_to_create}.txt', 'w') as win_classify_file:
     # file header
     row_classify_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         # for bot
         states_per_player[current_player].append(state_after_player_move)
         local_states_per_player[current_player].append(state_after_player_move)
-        print(f'append state for {current_player.name}')
+        # print(f'append state for {current_player.name}')
         
         states_from_player_per_column[current_player][column_to_play].append(state_after_player_move)
 
