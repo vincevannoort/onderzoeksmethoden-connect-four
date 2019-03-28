@@ -94,3 +94,23 @@ Model 11:
     batch size 64
 
     Won: 67.2%
+Model 12:
+    1 Conv2D filter 32 
+    1 Conv2D filter 64
+    no max pool
+    3 hidden layers
+    100.000 games
+    epochs 10
+    batch size 64
+
+    Won: 50.4%
+Model 12:
+    1 Conv2D filter 16
+    1 Conv2D filter 32
+    no max pool
+    3 hidden layers
+    100.000 games
+    epochs 10
+    batch size 64
+
+    Won: 77.5%
