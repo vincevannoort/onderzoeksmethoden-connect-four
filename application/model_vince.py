@@ -10,10 +10,13 @@ width = 7
 height = 6
 inputs = width * height * 3
 
+type = 'random'
+amount = 500000
+
 """
 Parse data
 """
-with open('../data/data_generated/data_row_unbiased_classify_connect_four_game_100_overfit.txt') as file:
+with open(f'../data/{type}/data_unbiased_column_states_connect_four_game_{amount}.txt') as file:
     content = file.readlines()
 
 data = [line.strip().split(";") for line in content[1:]] 
@@ -34,15 +37,14 @@ class Connect4KerasModel:
       keras.layers.Flatten(),
       keras.layers.Dense(inputs, activation=tf.nn.relu),
       keras.layers.Dense(inputs, activation=tf.nn.relu),
-      keras.layers.Dense(inputs, activation=tf.nn.relu),
       keras.layers.Dense(width, activation=tf.nn.sigmoid),
     ])
 
-    self.model.compile(optimizer=keras.optimizers.RMSPropOptimizer(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    self.model.compile(optimizer=keras.optimizers.RMSprop(lr=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
   def train(self, train_data, train_labels):
-    self.model.fit(train_data, train_labels, epochs=5, batch_size=64, validation_split=0.05)
+    self.model.fit(train_data, train_labels, epochs=10, batch_size=64, validation_split=0.2857)
 
 connect_four_model = Connect4KerasModel()
 connect_four_model.train(train_data, train_labels)
-connect_four_model.model.save('connect_four_model_vince_unbiased.h5')
+connect_four_model.model.save(f'../models/trained_with_{type}/model_vince_{amount*7}_moves.h5')

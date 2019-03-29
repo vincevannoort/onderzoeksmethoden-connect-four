@@ -19,13 +19,13 @@ Settings
 """    
 
 print("Start loading model")
-model = keras.models.load_model(f"connect_four_model_vince_unbiased.h5")
+model_minimax = keras.models.load_model(f"../models/trained_with_minimax/model_vince_17500_moves.h5")
+model_random = keras.models.load_model(f"../models/trained_with_random/model_jort_500000_moves.h5", compile=True)
 print("Finished loading model")
 
-first_player = Player("Bot", "B", "model_vince")
-second_player = Player("Opposite", "O", "player")
+first_player = Player("Bot", "B", "model_vince", model_minimax)
+second_player = Player("Opposite", "O", "model_jort", model_random)
 connect_four = ConnectFour(first_player, second_player)
-connect_four.current_player = first_player
 
 """
 Game loop
@@ -34,9 +34,9 @@ games_won = 0;
 games_lost = 0;
 games_total = 100;
 while (games_won + games_lost) < games_total:
-  cls()
+  # cls()
   connect_four.board.print_with_colors(first_player.signature, second_player.signature)
-  connect_four.current_player.play_move(connect_four, model)
+  connect_four.current_player.play_move(connect_four)
   player_that_has_won = connect_four.has_won()
   if (player_that_has_won is not None):
     connect_four.board.print_with_colors(first_player.signature, second_player.signature)

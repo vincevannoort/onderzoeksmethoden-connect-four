@@ -7,20 +7,21 @@ from random import choice, shuffle, uniform, randint
 import readchar
 
 class Player:
-  def __init__(self, name: str, signature: int, type: str, alpha=1):
+  def __init__(self, name: str, signature: int, type: str, model=None, alpha=1):
     self.name = name
     self.signature = signature
     self.type = type
     self.alpha = alpha
+    self.model = model
 
   def __str__(self):
     return self.name
 
-  def play_move(self, connect_four, model=None):
-    column_to_play = self.get_move(connect_four, model)
+  def play_move(self, connect_four):
+    column_to_play = self.get_move(connect_four)
     connect_four.move(column_to_play)
 
-  def get_move(self, connect_four, model=None):
+  def get_move(self, connect_four):
     current_player = connect_four.current_player
     opposite_player = connect_four.switch_player(connect_four.current_player)
 
@@ -44,7 +45,6 @@ class Player:
           break
         except:
           print('Not a valid number, try again')
-          self.get_move(connect_four, model)
 
     elif self.type is 'model_jort':
       def predict_board(column, board, model, player):
@@ -58,14 +58,15 @@ class Player:
       possible_boards_columns = connect_four.possible_boards_columns(current_player)
       # When predictions are the same doesn't pick the same column all the time.
       shuffle(possible_boards_columns)      
-      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, model, current_player))
+      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, self.model, current_player))
       
       column_to_play = best_column
 
     elif self.type is 'model_vince':
       board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))
       board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 3))
-      prediction = model.predict(np.array([board_representation,]))
+      prediction = self.model.predict(np.array([board_representation,]))
+      print(prediction)
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):
