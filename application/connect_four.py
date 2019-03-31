@@ -31,10 +31,10 @@ class Player:
     elif self.type is 'minimax':
       if uniform(0, 1) <= self.alpha:
         mini_max = Minimax(connect_four.board)
-        (best_moves, _) = mini_max.best_move(4, connect_four.board, current_player, opposite_player)
+        (best_moves, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
         column_to_play = choice(best_moves)
       else:
-        column_to_play = choice(possible_columns)
+        column_to_play = choice(connect_four.board.get_possible_columns())
 
     elif self.type is 'player':
       while True:
@@ -66,8 +66,8 @@ class Player:
       board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))
       board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 3))
       prediction = self.model.predict(np.array([board_representation,]))
-      print(prediction)
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
+      # TODO: shuffle if prediction chances are equal.
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):
           np.put(prediction, index, 0)
@@ -219,12 +219,25 @@ class ConnectFour:
     column_and_boards = []
     for column in range(self.board.width):
       if (self.can_move(column)):
-        self.fake_move(column)
+        self.move_without_player_switch(column)
         column_and_boards.append((column, self.board))
         self.board = deepcopy(temp_board)
     return column_and_boards
 
-  def fake_move(self, column: int):
+  def get_next_possible_states(self, player: Player):
+    """
+    Returns a list of (column, board)
+    """
+    column_and_states = []
+    for column in range(self.board.width):
+      connect_four_copy = deepcopy(self)
+      connect_four_copy.current_player = player
+      if (connect_four_copy.can_move(column)):
+        connect_four_copy.move(column)
+        column_and_states.append((column, connect_four_copy))
+    return column_and_states
+
+  def move_without_player_switch(self, column: int):
     if self.can_move(column):
       self.board.set_column(column, self.current_player)
     else:

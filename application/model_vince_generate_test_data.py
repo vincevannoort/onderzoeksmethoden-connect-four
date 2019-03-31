@@ -1,10 +1,11 @@
 from connect_four import ConnectFour, Board, Player
 from random import choice, shuffle, uniform, randint
-from copy import copy
+from copy import copy, deepcopy
 import readchar
 import os
 import numpy as np
 from minimax import Minimax
+import time
 
 np.set_printoptions(linewidth = 300);
 
@@ -24,7 +25,7 @@ class StateAfterMove:
 
 if __name__ == '__main__':
   # settings
-  states_to_create = 71428
+  states_to_create = 1400
   type = 'random' # random or minimax
 
   # generator
@@ -33,8 +34,8 @@ if __name__ == '__main__':
     unbiased_column_states_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
     unbiased_winloss_states_file.write(f'board representation;signature;column_played;game_ended;bot_won\n')
       
-    bot = Player('Bot', 'B', 'random')
-    opposite = Player('Opposite', 'O', 'random')
+    bot = Player('Bot', 'B', 'minimax')
+    opposite = Player('Opposite', 'O', 'minimax', alpha=0.6)
 
     # states
     all_states = list()
@@ -55,7 +56,7 @@ if __name__ == '__main__':
       states_per_player_per_column[opposite][i] = []
       states_per_column[i] = []
 
-    while (len(min(list(states_per_column.values()), key=len)) < states_to_create):
+    while (len(min(list(states_per_column.values()), key=len)) * 7 < states_to_create):
       connect_four = ConnectFour(bot, opposite)
       local_states_per_player = dict()
       local_states_per_player[bot] = []
@@ -77,17 +78,34 @@ if __name__ == '__main__':
           print(f'draw!')
           break
 
+        next_states = connect_four.get_next_possible_states(opposite_player)
+        for (column, state) in next_states:
+          if (state.has_won()):
+            print(f'block!')
+            # print(f'block on column: {column + 1} from player: {current_player.name}, {current_player.signature}!')
+            # connect_four.board.print_with_colors(bot.signature, opposite.signature)
+
+            connect_four_blocking = deepcopy(connect_four)
+            connect_four_blocking.move(column)
+            state_after_blocking_player_move = StateAfterMove(copy(connect_four.board), current_player, column, connect_four.has_won())
+            all_states.append(state_after_blocking_player_move)
+            states_per_player[current_player].append(state_after_blocking_player_move)
+            local_states_per_player[current_player].append(state_after_blocking_player_move)
+            states_from_player_per_column[current_player][column_to_play].append(state_after_blocking_player_move)
+
         column_to_play = connect_four.current_player.get_move(connect_four)
         connect_four.move(column_to_play)
         state_after_player_move = StateAfterMove(copy(connect_four.board), current_player, column_to_play, connect_four.has_won())
 
-        all_states.append(state_after_player_move)
-        states_per_player[current_player].append(state_after_player_move)
-        local_states_per_player[current_player].append(state_after_player_move)
-        states_from_player_per_column[current_player][column_to_play].append(state_after_player_move)
+        if (connect_four.has_won()):
+          all_states.append(state_after_player_move)
+          states_per_player[current_player].append(state_after_player_move)
+          local_states_per_player[current_player].append(state_after_player_move)
+          states_from_player_per_column[current_player][column_to_play].append(state_after_player_move)
 
         won_player = connect_four.has_won()
         loss_player = connect_four.switch_player(won_player)
+
 
         if (won_player is not None):
           print(f'{won_player.name} won!')
@@ -98,7 +116,6 @@ if __name__ == '__main__':
           for column in states_per_column:
             print(f'{len(states_per_column[column])}', end=' ')
           print()
-          connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
 
           if (won_player is bot):
             states_per_outcome['win'] += local_states_per_player[won_player]
