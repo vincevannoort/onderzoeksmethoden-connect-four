@@ -15,7 +15,7 @@ def cls():
 
 print("Start loading model")
 # model_minimax_vince = keras.models.load_model(f"../models/trained_with_minimax/model_vince_17500_moves.h5")
-model_random_vince = keras.models.load_model(f"../models/trained_with_random/model_vince_700_moves.h5")
+model_random_vince = keras.models.load_model(f"../models/trained_with_random/model_vince_500000_moves.h5")
 # model_minimax_jort = keras.models.load_model(f"../models/trained_with_random/model_jort_500000_moves.h5", compile=True)
 model_random_jort = keras.models.load_model(f"../models/trained_with_random/model_jort_500000_moves.h5", compile=True)
 print("Finished loading model")
@@ -24,7 +24,7 @@ print("Finished loading model")
 CONFIGURATION
 """
 configuration = 'player_vs_model_random_vince'
-games_to_play = 1
+games_to_play = 1000
 play_slow = False
 
 if configuration is 'model_random_jort_vs_model_random_vince':

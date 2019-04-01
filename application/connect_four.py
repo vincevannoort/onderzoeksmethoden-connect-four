@@ -49,7 +49,7 @@ class Player:
     elif self.type is 'model_jort':
       def predict_board(column, board, model, player):
         np_board = np.array([board.get_one_hot_array(player)])
-        np_board = np.reshape(np_board, (1, board.height, board.width, 3))
+        np_board = np.reshape(np_board, (1, board.height, board.width, 2))
         prediction = model.predict(np_board) 
         # Convert [[0.4]] -> 0.4
         prediction = prediction[0][0]
@@ -63,8 +63,8 @@ class Player:
       column_to_play = best_column
 
     elif self.type is 'model_vince':
-      board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))
-      board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 3))
+      board_representation = connect_four.board.get_one_hot_array(connect_four.current_player)
+      board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 2))
       prediction = self.model.predict(np.array([board_representation,]))
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
       # TODO: shuffle if prediction chances are equal.
@@ -123,12 +123,11 @@ class Board:
     def hole_to_array(hole, player: Player):
       """
       Generates one hot array from hole.
-      Empty hole        -> [1, 0, 0] 
-      Given player      -> [0, 1, 0] 
-      Not given player  -> [0, 0, 1]
+      Empty hole        -> [0, 0] 
+      Given player      -> [1, 0] 
+      Not given player  -> [0, 1]
       """
       return [
-        1 if hole is 0 else 0, # hole empty
         1 if hole is player.signature else 0, # hole self
         1 if hole is not player.signature and hole is not 0 else 0, # hole enemy
       ]
@@ -136,7 +135,7 @@ class Board:
     board_representation = []
     for hole in self.holes:
       board_representation += hole_to_array(hole, player)
-    return board_representation
+    return np.array(board_representation)
 
   def __str__(self):
     board_representation = ""
