@@ -10,8 +10,8 @@ width = 7
 height = 6
 inputs = width * height
 
-type = 'random'
-amount = 500000
+type = 'minimax'
+amount = 35000
 
 """
 Parse data
@@ -38,12 +38,12 @@ class Connect4KerasModel:
       keras.layers.Dense(width, activation=tf.nn.sigmoid),
     ])
 
-    # self.model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
-    self.model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+    self.model.compile(optimizer='adam', loss='mse', metrics=['accuracy','mae'])
 
   def train(self, train_data, train_labels):
-    self.model.fit(train_data, train_labels, epochs=30, batch_size=width*3*3)
+    self.model.fit(train_data, train_labels, epochs=20, batch_size=width*3*3)
 
-connect_four_model = Connect4KerasModel()
-connect_four_model.train(train_data, train_labels)
-connect_four_model.model.save(f'../models/trained_with_{type}/model_vince_{amount}_moves.h5')
+for index in range(100):
+  connect_four_model = Connect4KerasModel()
+  connect_four_model.train(train_data, train_labels)
+  connect_four_model.model.save(f'../models/trained_with_{type}/model_vince_{amount}_moves_{index}.h5')

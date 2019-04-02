@@ -156,6 +156,15 @@ class ConnectFour:
   def reset(self):
     self.__init__(self.first_player, self.second_player)
 
+  def get_opponent(self):
+    return self.switch_player(self.current_player)
+
+  def get_move(self):
+    return self.current_player.get_move(self)
+
+  def play_move(self):
+    self.current_player.play_move(self)
+
   def switch_player(self, player: Player):
     return self.second_player if self.current_player is self.first_player else self.first_player
 
