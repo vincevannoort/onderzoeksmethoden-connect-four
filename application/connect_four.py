@@ -47,27 +47,18 @@ class Player:
           print('Not a valid number, try again')
 
     elif self.type is 'model_jort':
-      def predict_board(column, board, model, player):
-        np_board = np.array([board.get_one_hot_array(player)])
-        np_board = np.reshape(np_board, (1, board.height, board.width, 2))
-        prediction = model.predict(np_board) 
-        # Convert [[0.4]] -> 0.4
-        prediction = prediction[0][0]
-        return prediction
+      def predict_board(column, board):
+        prediction = self.model.predict(np.array([board.get_one_hot_array(connect_four.current_player),])) 
+        return prediction[0][0]
 
       possible_boards_columns = connect_four.possible_boards_columns(current_player)
-      # When predictions are the same doesn't pick the same column all the time.
       shuffle(possible_boards_columns)      
-      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, self.model, current_player))
-      
+      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column))
       column_to_play = best_column
 
     elif self.type is 'model_vince':
-      board_representation = connect_four.board.get_one_hot_array(connect_four.current_player)
-      board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 2))
-      prediction = self.model.predict(np.array([board_representation,]))
+      prediction = self.model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
-      # TODO: shuffle if prediction chances are equal.
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):
           np.put(prediction, index, 0)
@@ -135,7 +126,7 @@ class Board:
     board_representation = []
     for hole in self.holes:
       board_representation += hole_to_array(hole, player)
-    return np.array(board_representation)
+    return np.reshape(np.array(board_representation), (self.height, self.width, 2))
 
   def __str__(self):
     board_representation = ""

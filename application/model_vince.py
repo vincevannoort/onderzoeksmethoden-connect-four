@@ -3,26 +3,27 @@ import keras
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Flatten
+from keras.utils import to_categorical
 from ast import literal_eval
 from random import shuffle
+import pickle
 
 width = 7
 height = 6
 inputs = width * height
 
-type = 'minimax'
-amount = 35000
+states_to_create = 100000
+generated_by_using = 'random'
+model = 'columnchoice'
 
 """
 Parse data
 """
-with open(f'../data/{type}/data_unbiased_column_states_connect_four_game_{amount}.txt') as file:
-    content = file.readlines()
+with open(f'../data/{generated_by_using}_model_{model}_{states_to_create}.txt', 'rb') as random_board_states_file:
+  content = pickle.load(random_board_states_file)
 
-data = [line.strip().split(";") for line in content[1:]] 
-train_data = np.array([ np.fromstring(data_item[0][1:-1], dtype=int, sep=' ') for data_item in data ])
-train_data = np.array([np.reshape(board, (height, width, 2)) for board in train_data])
-train_labels = np.array([ np.fromstring(data_item[2][1:-1], sep=' ') for data_item in data ])
+train_data = np.array([board for (board, column, win) in content])
+train_labels = np.array([to_categorical(column, 7) for (board, column, win) in content])
 
 """
 Setup model
@@ -38,12 +39,12 @@ class Connect4KerasModel:
       keras.layers.Dense(width, activation=tf.nn.sigmoid),
     ])
 
-    self.model.compile(optimizer='adam', loss='mse', metrics=['accuracy','mae'])
+    self.model.compile(optimizer=keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy','mae'])
 
   def train(self, train_data, train_labels):
-    self.model.fit(train_data, train_labels, epochs=20, batch_size=width*3*3)
+    self.model.fit(train_data, train_labels, epochs=50, batch_size=width*3*3)
 
-for index in range(100):
+for index in range(1):
   connect_four_model = Connect4KerasModel()
   connect_four_model.train(train_data, train_labels)
-  connect_four_model.model.save(f'../models/trained_with_{type}/model_vince_{amount}_moves_{index}.h5')
+  connect_four_model.model.save(f'../models/trained_with_{generated_by_using}/model_{model}_{states_to_create}_{index}.h5')

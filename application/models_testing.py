@@ -13,11 +13,12 @@ import time
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
+states_to_create = 100000
+generated_by_using = 'random'
+
 print("Start loading model")
-# model_minimax_vince = keras.models.load_model(f"../models/trained_with_minimax/model_vince_17500_moves.h5")
-model_random_vince = keras.models.load_model(f"../models/trained_with_random/model_vince_500000_moves.h5")
-# model_minimax_jort = keras.models.load_model(f"../models/trained_with_random/model_jort_500000_moves.h5", compile=True)
-model_random_jort = keras.models.load_model(f"../models/trained_with_random/model_jort_500000_moves.h5", compile=True)
+model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
+model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_jort_{states_to_create}_moves_0.h5",)
 print("Finished loading model")
 
 """
