@@ -3,6 +3,12 @@ from scipy import stats
 import random
 import math
 
+"""
+Hypothesis testing
+H0: meanj == meanv
+Ha: meanj > meanv
+"""
+
 if __name__ == '__main__':
     arrayj = [random.randint(700, 800) for _ in range(100)]
     arrayv = [random.randint(800, 900) for _ in range(100)]
