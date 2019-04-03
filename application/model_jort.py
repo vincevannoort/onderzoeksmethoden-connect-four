@@ -31,7 +31,6 @@ class Model:
         path = f"{self.model_path}/model_jort_{counter}.h5"
       return counter
     self.model_number = determine_model_number(0)
-    self.tensorboard = keras.callbacks.TensorBoard(log_dir=f'{self.log_path}/model_jort_{self.model_number}', histogram_freq=0, write_graph=True, write_images=True)
     """
     Keras Model
     """
@@ -104,8 +103,8 @@ class Model:
 
           offset += batch_size       
 
-  def train(self, train_data:list, test_data:list):
-    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[self.tensorboard], validation_split=0.05, batch_size=64, use_multiprocessing=True)
+  def train(self, train_data:list, test_data:list, tensorboard):
+    self.model.fit(train_data, test_data, verbose=1, epochs=self.epochs, callbacks=[tensorboard], validation_split=0.05, batch_size=64, use_multiprocessing=True)
 
   def train_batch(self, train_data_batch:list, train_label_batch:list):
     self.model.train_on_batch(train_data_batch, train_label_batch)
@@ -129,7 +128,8 @@ if __name__ == "__main__":
   model = Model(6, 7, '../data/model_logs', '../models/trained_with_random')
   data = model.retrieve_data('data_generated/data_win_classify_connect_four_game_moves_500000.txt')
   (train_data, train_labels) = model.convert_data(data)
+  tensorboard = model.create_tensorboard()
   print("Starting with training model")
-  model.train(train_data, train_labels)
+  model.train(train_data, train_labels, tensorboard)
   model.save()
   model.predict(np.array(train_data[0:35]), np.array(train_labels[0:35]))
