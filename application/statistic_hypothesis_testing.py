@@ -24,30 +24,31 @@ def hypothesis_testing(samples1, samples2):
   s2 = stats.tvar(samples2)
 
   # Calculate standard error
-  se = math.sqrt(sj/nj + sv/nv)
+  se = math.sqrt(s1/n1 + s2/n2)
 
   # Calculate z-score
-  zscore = (meanj - meanv) / se
+  zscore = (mean1 - mean2) / se
 
   # Calculate p-value
   # Confidence interval = 95%
-  pvalue = stats.norm.sf(abs(zscore))
+  pvalue = stats.norm.sf(zscore)
 
-  print(zscore)
-  print(pvalue)
+  print(f"ZScore: {zscore}")
+  print(f"PValue: {pvalue}")
 
   """
   Statsmodels
   """
   # Confidence interval = 95%
-  # Returns pvalue = 1.0 when zscore is negative
-  # (ztest, pvalue) = stests.ztest(arrayj, x2=arrayv, value=0, alternative='larger')
-  # print(ztest, pvalue)
+  (zscore, pvalue) = stests.ztest(samples1, x2=samples2, value=0, alternative='larger')
+  print(zscore, pvalue)
 
   if(pvalue < 0.05):
     print('Null hypothesis rejected')
   else:
     print('Null hypothesis not rejected')
+
+  return pvalue
 
 
 if __name__ == '__main__':
