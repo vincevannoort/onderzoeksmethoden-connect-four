@@ -4,26 +4,30 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import pickle
-# TODO: Let jort compile his model using this 'import keras' instead of 'from tensorflow import keras'
 import keras
+import argparse
 
 if __name__ == '__main__':
-  states_used_to_train_model = 2500
-  states_to_analyse = 10000
-  method_used_to_train = 'minimax'
-  method_used_to_generate = 'random'
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=7)
+  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=7)
+  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=0)
+  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='minimax')
+  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
+  args = parser.parse_args()
 
-  random_player = Player('Random', 'F', 'random')
-  model_vince_player_500000 = Player('Column Choice', 'F', 'model_vince', keras.models.load_model(f"../models/trained_with_{method_used_to_train}/model_columnchoice_{states_used_to_train_model}_0.h5"))
-  model_jort_player_500000 = Player('Win Loss', 'F', 'model_jort', keras.models.load_model(f"../models/trained_with_{method_used_to_train}/model_winloss_{states_used_to_train_model}_0.h5"))
-  random_opponent = Player('Random', 'S', 'random')
-  players = [random_player, model_vince_player_500000, model_jort_player_500000]
 
-  with open(f'../statistics/tests/{method_used_to_generate}_make_winning_move_states_{states_to_analyse}.txt', 'rb') as make_winning_move_states_file:
+  print('start loading players')
+  players = [Player(f'Column Choice {i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
+  # players += [Player(f'Win Loss {i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  print(players)
+  print('done loading players')
+
+  with open(f'../statistics/tests/random_make_winning_move_states_1000.txt', 'rb') as make_winning_move_states_file:
     make_winning_move_states = pickle.load(make_winning_move_states_file)
-  with open(f'../statistics/tests/{method_used_to_generate}_make_blocking_move_states_{states_to_analyse}.txt', 'rb') as make_blocking_move_states_file:
+  with open(f'../statistics/tests/random_make_blocking_move_states_1000.txt', 'rb') as make_blocking_move_states_file:
     make_blocking_move_states = pickle.load(make_blocking_move_states_file)
-  with open(f'../statistics/tests/{method_used_to_generate}_random_board_states_{states_to_analyse}.txt', 'rb') as random_board_states_file:
+  with open(f'../statistics/tests/random_random_board_states_1000.txt', 'rb') as random_board_states_file:
     random_board_states = pickle.load(random_board_states_file)
   
   correctness_per_player = []
@@ -47,13 +51,8 @@ if __name__ == '__main__':
       if (predicted_move == column):
         correct_make_blocking_move_states += 1
 
-    correctness_per_player.append((player.name, correct_make_winning_move_states, correct_make_blocking_move_states))
+    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states))
 
-correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Winning moves', 'Blocking moves'])
-
-plot_winning = sns.barplot(x="Player", y="Winning moves", data=correctness_per_player_data)
-plot_winning.set(ylim=(0, states_to_analyse))
-plot_winning.figure.savefig(f"../statistics/images/winning-moves-{states_to_analyse}.png")
-plot_blocking = sns.barplot(x="Player", y="Blocking moves", data=correctness_per_player_data)
-plot_blocking.set(ylim=(0, states_to_analyse))
-plot_blocking.figure.savefig(f"../statistics/images/blocking-moves-{states_to_analyse}.png")  
+correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves'])
+with open(f'../statistics/dataframes/analysis.pickle', 'wb') as dataframe_file:
+  pickle.dump(correctness_per_player_data, dataframe_file)

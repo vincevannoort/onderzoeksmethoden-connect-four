@@ -39,9 +39,10 @@ def hypothesis_testing(samples1, samples2):
   """
   Statsmodels
   """
-  # Confidence interval = 95%
-  # (zscore, pvalue) = stests.ztest(samples1, x2=samples2, value=0, alternative='larger')
-  # print(zscore, pvalue)
+  print(stests.ztest(samples1, x2=samples2, value=0, alternative='larger'))
+  print(stests.ztest(samples2, x2=samples1, value=0, alternative='larger'))
+
+  (zscore, pvalue) = stests.ztest(samples1, x2=samples2, value=0, alternative='larger')
 
   if(pvalue < 0.05):
     print('Null hypothesis rejected')

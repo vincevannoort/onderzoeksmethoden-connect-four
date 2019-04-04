@@ -25,18 +25,18 @@ class Player:
     current_player = connect_four.current_player
     opposite_player = connect_four.switch_player(connect_four.current_player)
 
-    if self.type is 'random':
+    if self.type == 'random':
       column_to_play = choice(connect_four.board.get_possible_columns())
 
-    elif self.type is 'minimax':
+    elif self.type == 'minimax':
       if uniform(0, 1) <= self.alpha:
         mini_max = Minimax(connect_four.board)
-        (best_moves, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
+        (best_moves, _) = mini_max.best_move(3, connect_four.board, current_player, opposite_player)
         column_to_play = choice(best_moves)
       else:
         column_to_play = choice(connect_four.board.get_possible_columns())
 
-    elif self.type is 'player':
+    elif self.type == 'player':
       while True:
         try:
           connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
@@ -46,7 +46,7 @@ class Player:
         except:
           print('Not a valid number, try again')
 
-    elif self.type is 'model_jort':
+    elif self.type == 'model_jort':
       def predict_board(column, board):
         prediction = self.model.predict(np.array([board.get_one_hot_array(connect_four.current_player),])) 
         return prediction[0][0]
@@ -56,13 +56,16 @@ class Player:
       (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column))
       column_to_play = best_column
 
-    elif self.type is 'model_vince':
+    elif self.type == 'model_vince':
       prediction = self.model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):
           np.put(prediction, index, 0)
       column_to_play = np.argmax(prediction)
+
+    else:
+     raise Exception('Invalid type was passed to the player')
 
     return column_to_play
 

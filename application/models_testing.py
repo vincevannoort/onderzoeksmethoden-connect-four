@@ -14,12 +14,12 @@ def cls():
     os.system('cls' if os.name=='nt' else 'clear')
 
 states_to_create = 100000
-generated_by_using = 'random'
+generated_by_using = 'minimax'
 
 print("Start loading model")
 # model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
-model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_columnchoice_{states_to_create}_0.h5")
-model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_winloss_{states_to_create}_0.h5",)
+model_random_vince = keras.models.load_model(f"../models/minimax_t2000_w1000_b1000_r0_model_columnchoice_0.h5")
+# model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_winloss_{states_to_create}_0.h5",)
 print("Finished loading model")
 
 """
