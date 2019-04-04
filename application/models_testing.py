@@ -17,8 +17,9 @@ states_to_create = 100000
 generated_by_using = 'random'
 
 print("Start loading model")
-model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
-model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_jort_{states_to_create}_moves_0.h5",)
+# model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
+model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_columnchoice_{states_to_create}_0.h5")
+model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_winloss_{states_to_create}_0.h5",)
 print("Finished loading model")
 
 """

@@ -12,8 +12,8 @@ width = 7
 height = 6
 inputs = width * height
 
-states_to_create = 100000
-generated_by_using = 'random'
+states_to_create = 2500
+generated_by_using = 'minimax'
 model = 'winloss'
 
 """
@@ -42,7 +42,7 @@ class Connect4KerasModel:
     self.model.compile(optimizer=keras.optimizers.RMSprop(lr=0.001), loss='binary_crossentropy', metrics=['accuracy','mae'])
 
   def train(self, train_data, train_labels):
-    self.model.fit(train_data, train_labels, epochs=50, batch_size=width*3*3)
+    self.model.fit(train_data, train_labels, epochs=1000, batch_size=width*3*3)
 
 for index in range(1):
   connect_four_model = Connect4KerasModel()

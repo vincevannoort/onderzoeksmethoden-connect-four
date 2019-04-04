@@ -66,7 +66,7 @@ def generate_partly_filled_board_states(connect_four: ConnectFour, states_to_cre
   return states
 
 if __name__ == '__main__':
-  states_to_create = 10000
+  states_to_create = 1000
   generate_by_using = 'minimax'
   first_player = Player('first_player', 'F', generate_by_using)
   second_player = Player('second_player', 'S', generate_by_using)

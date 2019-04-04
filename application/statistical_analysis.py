@@ -8,21 +8,22 @@ import pickle
 import keras
 
 if __name__ == '__main__':
-  states_used_to_train_model = 100000
+  states_used_to_train_model = 2500
   states_to_analyse = 10000
-  generate_by_using = 'random'
+  method_used_to_train = 'minimax'
+  method_used_to_generate = 'random'
 
   random_player = Player('Random', 'F', 'random')
-  model_vince_player_500000 = Player('Column Choice', 'F', 'model_vince', keras.models.load_model(f"../models/trained_with_{generate_by_using}/model_columnchoice_{states_used_to_train_model}_0.h5"))
-  model_jort_player_500000 = Player('Win Loss', 'F', 'model_jort', keras.models.load_model(f"../models/trained_with_{generate_by_using}/model_winloss_{states_used_to_train_model}_0.h5"))
+  model_vince_player_500000 = Player('Column Choice', 'F', 'model_vince', keras.models.load_model(f"../models/trained_with_{method_used_to_train}/model_columnchoice_{states_used_to_train_model}_0.h5"))
+  model_jort_player_500000 = Player('Win Loss', 'F', 'model_jort', keras.models.load_model(f"../models/trained_with_{method_used_to_train}/model_winloss_{states_used_to_train_model}_0.h5"))
   random_opponent = Player('Random', 'S', 'random')
   players = [random_player, model_vince_player_500000, model_jort_player_500000]
 
-  with open(f'../statistics/tests/{generate_by_using}_make_winning_move_states_{states_to_analyse}.txt', 'rb') as make_winning_move_states_file:
+  with open(f'../statistics/tests/{method_used_to_generate}_make_winning_move_states_{states_to_analyse}.txt', 'rb') as make_winning_move_states_file:
     make_winning_move_states = pickle.load(make_winning_move_states_file)
-  with open(f'../statistics/tests/{generate_by_using}_make_blocking_move_states_{states_to_analyse}.txt', 'rb') as make_blocking_move_states_file:
+  with open(f'../statistics/tests/{method_used_to_generate}_make_blocking_move_states_{states_to_analyse}.txt', 'rb') as make_blocking_move_states_file:
     make_blocking_move_states = pickle.load(make_blocking_move_states_file)
-  with open(f'../statistics/tests/{generate_by_using}_random_board_states_{states_to_analyse}.txt', 'rb') as random_board_states_file:
+  with open(f'../statistics/tests/{method_used_to_generate}_random_board_states_{states_to_analyse}.txt', 'rb') as random_board_states_file:
     random_board_states = pickle.load(random_board_states_file)
   
   correctness_per_player = []
