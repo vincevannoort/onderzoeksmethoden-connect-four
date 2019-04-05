@@ -31,7 +31,7 @@ class Player:
     elif self.type == 'minimax':
       if uniform(0, 1) <= self.alpha:
         mini_max = Minimax(connect_four.board)
-        (best_moves, _) = mini_max.best_move(3, connect_four.board, current_player, opposite_player)
+        (best_moves, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
         column_to_play = choice(best_moves)
       else:
         column_to_play = choice(connect_four.board.get_possible_columns())

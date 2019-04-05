@@ -25,7 +25,7 @@ print("Finished loading model")
 """
 CONFIGURATION
 """
-configuration = 'player_vs_model_random_vince'
+configuration = 'player_vs_minimax'
 games_to_play = 1000
 play_slow = False
 
@@ -53,6 +53,9 @@ elif configuration is 'player_vs_model_random_vince':
 elif configuration is 'player_vs_model_random_jort':
   first_player = Player("Jort", "J", "player")
   second_player = Player("Bot Jort", "B", "model_jort", model_random_jort)
+elif configuration is 'player_vs_minimax':
+  first_player = Player("Vince", "V", "player")
+  second_player = Player("Minimax", "M", "minimax", )
 elif configuration is 'player_vs_player':
   first_player = Player("Vince", "V", "player")
   second_player = Player("Jort", "J", "player")
