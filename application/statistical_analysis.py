@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
   print('start loading players')
   players = [Player(f'Column Choice {i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
-  # players += [Player(f'Win Loss {i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  players += [Player(f'Win Loss {i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{i}.h5")) for i in range(args.amount)]
   print(players)
   print('done loading players')
 
