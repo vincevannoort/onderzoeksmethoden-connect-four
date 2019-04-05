@@ -53,7 +53,7 @@ def hypothesis_testing(samples1, samples2):
 
 
 if __name__ == '__main__':
-  samples1 = [random.randint(700, 800) for _ in range(100)]
+  samples1 = [random.randint(800, 900) for _ in range(100)]
   samples2 = [random.randint(800, 900) for _ in range(100)]
   hypothesis_testing(samples1, samples2)
 
