@@ -27,7 +27,7 @@ if __name__ == '__main__':
     make_winning_move_states = pickle.load(make_winning_move_states_file)
   with open(f'../statistics/tests/random_make_blocking_move_states_1000.txt', 'rb') as make_blocking_move_states_file:
     make_blocking_move_states = pickle.load(make_blocking_move_states_file)
-  with open(f'../statistics/tests/random_random_board_states_1000.txt', 'rb') as random_board_states_file:
+  with open(f'../statistics/tests/random_random_board_states_2000.txt', 'rb') as random_board_states_file:
     random_board_states = pickle.load(random_board_states_file)
   
   correctness_per_player = []
