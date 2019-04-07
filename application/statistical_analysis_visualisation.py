@@ -21,14 +21,14 @@ if __name__ == '__main__':
 
   # plot for winning per model - 100 bars
   plot_winning = sns.barplot(x="Player", y="Winning moves", data=correctness_per_player_data, ci='sd')
-  plot_winning.set(ylim=(0, 10000))
+  plot_winning.set(ylim=(0, 1000))
   plot_winning.figure.savefig(f"../statistics/images/analysis-winning-moves.png")
 
   # plot for winning per classifier - 2 bars
 
   # plot for blocking per model - 100 bars
   plot_blocking = sns.barplot(x="Player", y="Blocking moves", data=correctness_per_player_data)
-  plot_blocking.set(ylim=(0, 10000))
+  plot_blocking.set(ylim=(0, 1000))
   plot_blocking.figure.savefig(f"../statistics/images/analysis-blocking-moves.png")  
 
   # plot for blocking per classifier - 2 bars

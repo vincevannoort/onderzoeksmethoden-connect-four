@@ -18,14 +18,14 @@ generated_by_using = 'minimax'
 
 print("Start loading model")
 # model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
-model_random_vince = keras.models.load_model(f"../models/minimax_t2000_w1000_b1000_r0_model_columnchoice_0.h5")
-# model_random_jort = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_winloss_{states_to_create}_0.h5",)
+model_random_vince = keras.models.load_model(f"../models/random_t1500000_w500000_b500000_r500000_model_columnchoice_0.h5")
+model_random_jort = keras.models.load_model(f"../models/random_t1500000_w500000_b500000_r500000_model_winloss_0.h5",)
 print("Finished loading model")
 
 """
 CONFIGURATION
 """
-configuration = 'player_vs_minimax'
+configuration = 'player_vs_model_random_jort'
 games_to_play = 1000
 play_slow = False
 

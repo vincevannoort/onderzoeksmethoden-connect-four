@@ -26,7 +26,7 @@ class Connect4KerasModel:
     self.model.compile(optimizer=keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy','mae'])
 
   def train(self, train_data, train_labels, batch_size):
-    self.model.fit(train_data, train_labels, epochs=10, batch_size=batch_size)
+    self.model.fit(train_data, train_labels, epochs=5, batch_size=batch_size)
 
 if __name__ == '__main__':
   """

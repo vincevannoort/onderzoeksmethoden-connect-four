@@ -119,9 +119,11 @@ if __name__ == '__main__':
   make_winning_move_states = generate_ability_to_make_winning_move_states(connect_four, args.winning, first_player, second_player)
   make_blocking_move_states = generate_ability_to_block_losing_move_states(connect_four, args.blocking, first_player, second_player)
   make_random_move_states = generate_random_move_states(connect_four, args.random, first_player, second_player)
+  make_random_move_states_only_winning = list(filter(lambda state: state[2], make_random_move_states))
+  make_random_move_states_only_winning = list(map(lambda state: (state[0], state[1]), make_random_move_states_only_winning))
 
   with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss.txt', 'wb') as make_winning_move_states_file:
     pickle.dump(make_winning_move_states + make_blocking_move_states + make_random_move_states, make_winning_move_states_file)
 
   with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice.txt', 'wb') as make_winning_move_states_file:
-    pickle.dump(make_winning_move_states + make_blocking_move_states, make_winning_move_states_file)
+    pickle.dump(make_winning_move_states + make_blocking_move_states + make_random_move_states_only_winning, make_winning_move_states_file)
