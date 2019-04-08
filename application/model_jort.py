@@ -27,6 +27,12 @@ class Connect4KerasModel:
 
   def train(self, train_data, train_labels, batch_size):
     self.model.fit(train_data, train_labels, epochs=10, batch_size=batch_size)
+  
+  def predict(self, train_data, train_labels):
+    predictions = self.model.predict(train_data)
+    for x in range(len(predictions)):
+      print(f"Prediction: {predictions[x]}. Label: {train_labels[x]}")
+      
 
 if __name__ == '__main__':
   """
@@ -50,4 +56,5 @@ if __name__ == '__main__':
   for index in range(args.amount):
     connect_four_model = Connect4KerasModel(7, 6)
     connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
+    # connect_four_model.predict(np.array(train_data[0:10]), np.array(train_labels[0:10]))
     connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')
