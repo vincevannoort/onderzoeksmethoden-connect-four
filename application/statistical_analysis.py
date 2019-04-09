@@ -9,18 +9,26 @@ import argparse
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
-  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=7)
-  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=7)
-  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=0)
-  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='minimax')
-  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
+  parser.add_argument("--winning1", "-w1", help="amount of winning moves", type=int, default=75000)
+  parser.add_argument("--blocking1", "-b1", help="amount of blocking moves", type=int, default=75000)
+  parser.add_argument("--random1", "-r1", help="amount of random moves", type=int, default=0)
+  parser.add_argument("--winning2", "-w2", help="amount of winning moves", type=int, default=50000)
+  parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=50000)
+  parser.add_argument("--random2", "-r2", help="amount of random moves", type=int, default=50000)
+  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
+  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=100)
   args = parser.parse_args()
 
 
   print('start loading players')
   random_player = Player(f'random', 'S', 'random')
-  players = [Player(f'cc{i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
-  players += [Player(f'wl{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  players_vince = [Player(f'cc{i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning1 + args.blocking1 + args.random1}_w{args.winning1}_b{args.blocking1}_r{args.random1}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
+  player_vince = deepcopy(players_vince[0])
+  player_vince.signature = 'S'
+  players_jort = [Player(f'wl{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning2 + args.blocking2 + args.random2}_w{args.winning2}_b{args.blocking2}_r{args.random2}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  player_jort = deepcopy(players_jort[0])
+  player_jort.signature = 'S'
+  players = players_vince + players_jort
   print(players)
   print('done loading players')
 
@@ -35,7 +43,10 @@ if __name__ == '__main__':
   for player in players:
     correct_make_winning_move_states = 0
     correct_make_blocking_move_states = 0
-    amount_of_won_games_on_filled_boards = 0
+    won_against_random = 0
+    draw_against_random = 0
+    won_against_opposite = 0
+    draw_against_opposite = 0
     steps_taken_on_filled_boards_wins = dict()
 
     for (connect_four, column) in make_winning_move_states:
@@ -69,21 +80,36 @@ if __name__ == '__main__':
           print(connect_four_adjusted.has_won() is not None)
           connect_four_adjusted.board.print_with_colors(player.signature, None)
           break
+
+      if (connect_four_adjusted.is_draw()):
+        draw_against_random += 1
       
-      # print(connect_four.has_won())
-      # print(moves_played)
-      # connect_four_adjusted.board.print_with_colors(player.signature, None)
-      # break
       if (connect_four_adjusted.has_won() is player):
-        amount_of_won_games_on_filled_boards += 1
+        won_against_random += 1
         if moves_played in steps_taken_on_filled_boards_wins:
           steps_taken_on_filled_boards_wins[moves_played] += 1
         else:
           steps_taken_on_filled_boards_wins[moves_played] = 1
 
-    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states, amount_of_won_games_on_filled_boards, steps_taken_on_filled_boards_wins))
+    
+    for connect_four in random_board_states[:100]:
+      connect_four_adjusted = deepcopy(connect_four)
+      connect_four_adjusted.first_player = player
+      connect_four_adjusted.second_player = player_jort if player.type == 'model_vince' else player_vince
 
-correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves', 'Won games on filled boards', 'Steps taken on filled boards wins'])
+      while not(connect_four_adjusted.is_draw() or connect_four_adjusted.has_won()):
+        connect_four_adjusted.play_move()
+
+      if (connect_four_adjusted.is_draw()):
+        draw_against_opposite += 1
+
+      if (connect_four_adjusted.has_won() is player):
+        won_against_opposite += 1
+
+    print(f'done for player: {player.name}')
+    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states, won_against_random, draw_against_random, steps_taken_on_filled_boards_wins, won_against_opposite, draw_against_opposite))
+
+correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves', 'Won against random', 'Draw against random', 'Steps to Win', 'Won against opposite', 'Draw against opposite'])
 print(correctness_per_player_data)
-with open(f'../statistics/dataframes/analysis.pickle', 'wb') as dataframe_file:
+with open(f'../statistics/dataframes/analysis_{args.amount}.pickle', 'wb') as dataframe_file:
   pickle.dump(correctness_per_player_data, dataframe_file)
