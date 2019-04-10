@@ -13,7 +13,7 @@ def hypothesis_testing(samples1, samples2):
   """
   Statsmodels
   """
-  (tstat, pvalue, df) = stests.ttest_ind(samples1, x2=samples2, value=0, alternative='larger')
+  (tstat, pvalue, df) = stests.ttest_ind(samples1, x2=samples2, value=0, alternative='two-sided')
 
   print(f"TScore: {tstat}")
   print(f"Pvalue: {pvalue}")

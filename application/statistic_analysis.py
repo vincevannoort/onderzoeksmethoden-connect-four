@@ -47,7 +47,8 @@ if __name__ == '__main__':
     draw_against_random = 0
     won_against_opposite = 0
     draw_against_opposite = 0
-    steps_taken_on_filled_boards_wins = dict()
+    steps_win_against_random = dict()
+    steps_win_against_opposite = dict()
 
     for (connect_four, column) in make_winning_move_states:
       connect_four_adjusted = deepcopy(connect_four)
@@ -86,18 +87,21 @@ if __name__ == '__main__':
       
       if (connect_four_adjusted.has_won() is player):
         won_against_random += 1
-        if moves_played in steps_taken_on_filled_boards_wins:
-          steps_taken_on_filled_boards_wins[moves_played] += 1
+        if moves_played in steps_win_against_random:
+          steps_win_against_random[moves_played] += 1
         else:
-          steps_taken_on_filled_boards_wins[moves_played] = 1
+          steps_win_against_random[moves_played] = 1
 
     
     for connect_four in random_board_states[:100]:
       connect_four_adjusted = deepcopy(connect_four)
       connect_four_adjusted.first_player = player
       connect_four_adjusted.second_player = player_jort if player.type == 'model_vince' else player_vince
+      moves_played = 0
 
       while not(connect_four_adjusted.is_draw() or connect_four_adjusted.has_won()):
+        if connect_four_adjusted.current_player is player:
+          moves_played += 1
         connect_four_adjusted.play_move()
 
       if (connect_four_adjusted.is_draw()):
@@ -105,11 +109,15 @@ if __name__ == '__main__':
 
       if (connect_four_adjusted.has_won() is player):
         won_against_opposite += 1
+        if moves_played in steps_win_against_opposite:
+          steps_win_against_opposite[moves_played] += 1
+        else:
+          steps_win_against_opposite[moves_played] = 1
 
     print(f'done for player: {player.name}')
-    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states, won_against_random, draw_against_random, steps_taken_on_filled_boards_wins, won_against_opposite, draw_against_opposite))
+    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states, won_against_random, draw_against_random, steps_win_against_random, steps_win_against_opposite, won_against_opposite, draw_against_opposite))
 
-correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves', 'Won against random', 'Draw against random', 'Steps to Win', 'Won against opposite', 'Draw against opposite'])
+correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves', 'Won against random', 'Draw against random', 'Steps win against random', 'Steps win against opposite', 'Won against opposite', 'Draw against opposite'])
 print(correctness_per_player_data)
 with open(f'../statistics/dataframes/analysis_{args.amount}.pickle', 'wb') as dataframe_file:
   pickle.dump(correctness_per_player_data, dataframe_file)

@@ -18,13 +18,15 @@ generated_by_using = 'minimax'
 
 print("Start loading model")
 # model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
-model_random_vince = keras.models.load_model(f"../models/minimax_t150000_w50000_b50000_r50000_model_columnchoice_0.h5")
+model_random_vince = keras.models.load_model(f"../models/random_t150000_w75000_b75000_r0_model_columnchoice_0.h5")
 model_random_jort = keras.models.load_model(f"../models/random_t150000_w50000_b50000_r50000_model_winloss_0.h5",)
 print("Finished loading model")
 
 """
 CONFIGURATION
 """
+configuration = 'model_random_vince_vs_random'
+configuration = 'model_random_jortr_vs_random'
 configuration = 'model_random_jort_vs_model_random_vince'
 games_to_play = 1
 play_slow = True
@@ -72,7 +74,7 @@ while (games_won + games_lost) < games_to_play:
   if play_slow:
     cls()
     connect_four.board.print_with_colors(first_player.signature, second_player.signature)
-    time.sleep(0.3)
+    time.sleep(0.7)
 
   if (player_that_has_won is not None):
     if player_that_has_won is first_player:
