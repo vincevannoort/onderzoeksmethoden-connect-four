@@ -40,9 +40,10 @@ if __name__ == '__main__':
   description: generate models given training data
   """
   parser = argparse.ArgumentParser()
-  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=7)
-  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=7)
-  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=0)
+  random_t225000_w37500_b37500_r150000_model_winloss
+  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=37500)
+  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=37500)
+  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=150000)
   parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='minimax')
   parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
   args = parser.parse_args()
