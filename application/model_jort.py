@@ -50,11 +50,11 @@ if __name__ == '__main__':
   with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss.txt', 'rb') as board_states_file:
     content = pickle.load(board_states_file)
 
-  train_data = np.array([board for (board, column, win) in content])
-  train_labels = np.array([int(win) for (board, column, win) in content])
+  train_data = np.array([current_board for (_, current_board, _, _) in content])
+  train_labels = np.array([int(win) for (_, _, _, win) in content])
 
-  for index in range(args.amount):
-    connect_four_model = Connect4KerasModel(7, 6)
-    connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
-    # connect_four_model.predict(np.array(train_data[0:10]), np.array(train_labels[0:10]))
-    connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')
+  # for index in range(args.amount):
+  #   connect_four_model = Connect4KerasModel(7, 6)
+  #   connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
+  #   # connect_four_model.predict(np.array(train_data[0:10]), np.array(train_labels[0:10]))
+  #   connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')

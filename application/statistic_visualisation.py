@@ -18,13 +18,18 @@ import matplotlib.style as style
 if __name__ == '__main__':
   with open(f'../statistics/dataframes/analysis_20.pickle', 'rb') as dataframe_file:
     correctness_per_player_data = pickle.load(dataframe_file)
-  correctness_per_player_data = correctness_per_player_data.replace('model_jort', 'Winloss classifier')
+  correctness_per_player_data = correctness_per_player_data.replace('model_jort', 'Win/Lose classifier')
   correctness_per_player_data = correctness_per_player_data.replace('model_vince', 'Column choice classifier')
 
   # colors
   sns.set_palette(["#63b7ff", "#00844a", "#e0e000"])
   # size (resolution)
   style.use('seaborn-poster')
+
+  plot = sns.barplot(x="Player", y="Winning moves", palette=["#63b7ff"] * 10 + ["#00844a"] * 10, data=pd.concat([correctness_per_player_data[:10], correctness_per_player_data[20:30]]))
+  plot.set(xlabel="Classifier", ylabel="Correct winning moves (out of 1000) per player")
+  plot.figure.savefig(f"../statistics/images/analysis-winning-moves-per-player.png")
+  plot.figure.clf()
 
   plot = sns.boxplot(x="Type", y="Winning moves", data=correctness_per_player_data)
   plot.set(xlabel="Classifier", ylabel="Correct winning moves (out of 1000)")
@@ -82,6 +87,7 @@ if __name__ == '__main__':
   correctness_per_player_data['t_four'] = wins_in_four_turns
   correctness_per_player_data['t_fiv'] = wins_in_five_turns
   correctness_per_player_data['t_six'] = wins_in_six_turns
+  print(correctness_per_player_data)
 
   plot = sns.boxplot(x="Type", y="t_one", data=correctness_per_player_data)
   plot = sns.boxplot(x="Type", y="t_two", data=correctness_per_player_data)

@@ -44,8 +44,8 @@ if __name__ == '__main__':
   with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice.txt', 'rb') as board_states_file:
     content = pickle.load(board_states_file)
 
-  train_data = np.array([board for (board, column, win) in content])
-  train_labels = np.array([to_categorical(column, 7) for (board, column, win) in content])
+  train_data = np.array([before_board for (before_board, _, _, _) in content])
+  train_labels = np.array([to_categorical(column, 7) for (_, _ column, _) in content])
 
   for index in range(args.amount):
     connect_four_model = Connect4KerasModel(7, 6)
