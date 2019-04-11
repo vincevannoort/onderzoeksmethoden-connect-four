@@ -40,18 +40,35 @@ if __name__ == '__main__':
   description: generate models given training data
   """
   parser = argparse.ArgumentParser()
-  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=37500)
-  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=37500)
-  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=150000)
+  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=100000)
+  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=100000)
+  parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=200000)
   parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
   parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
   args = parser.parse_args()
   
-  with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss.txt', 'rb') as board_states_file:
-    content = pickle.load(board_states_file)
+  states = []
+  if (args.winning > 0):
+    with open(f'../data/{args.type}_winning_{args.winning}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states += states_from_file[:25000]
 
-  train_data = np.array([current_board for (_, current_board, _, _) in content])
-  train_labels = np.array([int(win) for (_, _, _, win) in content])
+  if (args.blocking > 0):
+    with open(f'../data/{args.type}_blocking_{args.blocking}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states += states_from_file[:25000]
+
+  if (args.random > 0):
+    with open(f'../data/{args.type}_random_{args.random}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states_from_file_winning = list(filter(lambda state: state[3], states_from_file))
+      states_from_file_losing = list(filter(lambda state: not state[3], states_from_file))
+      states += states_from_file_winning[:25000]
+      states += states_from_file_losing[:75000]
+      states += states_from_file
+
+  train_data = np.array([current_board for (_, current_board, _, _) in states])
+  train_labels = np.array([int(win) for (_, _, _, win) in states])
 
   for index in range(args.amount):
     connect_four_model = Connect4KerasModel(7, 6)

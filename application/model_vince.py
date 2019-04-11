@@ -34,18 +34,34 @@ if __name__ == '__main__':
   description: generate models given training data
   """
   parser = argparse.ArgumentParser()
-  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=75000)
-  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=75000)
+  parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=100000)
+  parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=100000)
   parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=0)
-  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='minimax')
+  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
   parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
   args = parser.parse_args()
   
-  with open(f'../data/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_columnchoice.txt', 'rb') as board_states_file:
-    content = pickle.load(board_states_file)
+  states = []
+  if (args.winning > 0):
+    with open(f'../data/{args.type}_winning_{args.winning}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states += states_from_file[:75000]
 
-  train_data = np.array([before_board for (before_board, _, _, _) in content])
-  train_labels = np.array([to_categorical(column, 7) for (_, _, column, _) in content])
+  if (args.blocking > 0):
+    with open(f'../data/{args.type}_blocking_{args.blocking}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states += states_from_file[:75000]
+
+  if (args.random > 0):
+    with open(f'../data/{args.type}_random_{args.random}.pickle', 'rb') as board_states_file:
+      states_from_file = pickle.load(board_states_file)
+      states_from_file_winning = list(map(lambda state: state[3], states_from_file))
+      states_from_file_losing = list(map(lambda state: not state[3], states_from_file))
+      states += states_from_file
+
+  print(len(states))
+  train_data = np.array([before_board for (before_board, _, _, _) in states])
+  train_labels = np.array([to_categorical(column, 7) for (_, _, column, _) in states])
 
   for index in range(args.amount):
     connect_four_model = Connect4KerasModel(7, 6)
