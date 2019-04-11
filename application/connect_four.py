@@ -58,6 +58,7 @@ class Player:
 
     elif self.type == 'model_vince':
       prediction = self.model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
+      print(prediction.tolist())
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):

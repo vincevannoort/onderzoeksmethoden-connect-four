@@ -12,11 +12,11 @@ if __name__ == '__main__':
   parser.add_argument("--winning1", "-w1", help="amount of winning moves", type=int, default=75000)
   parser.add_argument("--blocking1", "-b1", help="amount of blocking moves", type=int, default=75000)
   parser.add_argument("--random1", "-r1", help="amount of random moves", type=int, default=0)
-  parser.add_argument("--winning2", "-w2", help="amount of winning moves", type=int, default=50000)
-  parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=50000)
-  parser.add_argument("--random2", "-r2", help="amount of random moves", type=int, default=50000)
+  parser.add_argument("--winning2", "-w2", help="amount of winning moves", type=int, default=37500)
+  parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=37500)
+  parser.add_argument("--random2", "-r2", help="amount of random moves", type=int, default=150000)
   parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
-  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=100)
+  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=10)
   args = parser.parse_args()
 
 
@@ -66,7 +66,8 @@ if __name__ == '__main__':
       if (predicted_move == column):
         correct_make_blocking_move_states += 1
 
-    for connect_four in random_board_states:
+    total_moves_played_random = 0
+    for connect_four in random_board_states[:100]:
       connect_four_adjusted = deepcopy(connect_four)
       connect_four_adjusted.first_player = player
       connect_four_adjusted.second_player = random_player
@@ -86,13 +87,14 @@ if __name__ == '__main__':
         draw_against_random += 1
       
       if (connect_four_adjusted.has_won() is player):
+        total_moves_played_random += moves_played
         won_against_random += 1
         if moves_played in steps_win_against_random:
           steps_win_against_random[moves_played] += 1
         else:
           steps_win_against_random[moves_played] = 1
 
-    
+    total_moves_played_opposite = 0
     for connect_four in random_board_states[:100]:
       connect_four_adjusted = deepcopy(connect_four)
       connect_four_adjusted.first_player = player
@@ -108,6 +110,7 @@ if __name__ == '__main__':
         draw_against_opposite += 1
 
       if (connect_four_adjusted.has_won() is player):
+        total_moves_played_opposite += moves_played
         won_against_opposite += 1
         if moves_played in steps_win_against_opposite:
           steps_win_against_opposite[moves_played] += 1
@@ -115,9 +118,40 @@ if __name__ == '__main__':
           steps_win_against_opposite[moves_played] = 1
 
     print(f'done for player: {player.name}')
-    correctness_per_player.append((player.name, player.type, correct_make_winning_move_states, correct_make_blocking_move_states, won_against_random, draw_against_random, steps_win_against_random, steps_win_against_opposite, won_against_opposite, draw_against_opposite))
+    correctness_per_player.append((
+      player.name,
+      player.type,
+      correct_make_winning_move_states,
+      correct_make_blocking_move_states,
+      won_against_random,
+      draw_against_random,
+      steps_win_against_random,
+      steps_win_against_opposite,
+      won_against_opposite,
+      draw_against_opposite,
+      total_moves_played_random,
+      total_moves_played_opposite,
+      total_moves_played_random / won_against_random,
+      total_moves_played_opposite / won_against_opposite
+      ))
 
-correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = ['Player', 'Type', 'Winning moves', 'Blocking moves', 'Won against random', 'Draw against random', 'Steps win against random', 'Steps win against opposite', 'Won against opposite', 'Draw against opposite'])
+correctness_per_player_data = pd.DataFrame(correctness_per_player, columns = [
+  'Player', 
+  'Type', 
+  'Winning moves', 
+  'Blocking moves', 
+  'Won against random', 
+  'Draw against random', 
+  'Steps win against random', 
+  'Steps win against opposite', 
+  'Won against opposite', 
+  'Draw against opposite', 
+  'Total moves played random', 
+  'Total moves played opposite',
+  'Average moves played random',
+  'Average moves played opposite'
+  ])
+
 print(correctness_per_player_data)
 with open(f'../statistics/dataframes/analysis_{args.amount}.pickle', 'wb') as dataframe_file:
   pickle.dump(correctness_per_player_data, dataframe_file)

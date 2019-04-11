@@ -40,11 +40,10 @@ if __name__ == '__main__':
   description: generate models given training data
   """
   parser = argparse.ArgumentParser()
-  random_t225000_w37500_b37500_r150000_model_winloss
   parser.add_argument("--winning", "-w", help="amount of winning moves", type=int, default=37500)
   parser.add_argument("--blocking", "-b", help="amount of blocking moves", type=int, default=37500)
   parser.add_argument("--random", "-r", help="amount of random moves", type=int, default=150000)
-  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='minimax')
+  parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
   parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=1)
   args = parser.parse_args()
   
@@ -54,8 +53,7 @@ if __name__ == '__main__':
   train_data = np.array([current_board for (_, current_board, _, _) in content])
   train_labels = np.array([int(win) for (_, _, _, win) in content])
 
-  # for index in range(args.amount):
-  #   connect_four_model = Connect4KerasModel(7, 6)
-  #   connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
-  #   # connect_four_model.predict(np.array(train_data[0:10]), np.array(train_labels[0:10]))
-  #   connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')
+  for index in range(args.amount):
+    connect_four_model = Connect4KerasModel(7, 6)
+    connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
+    connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')

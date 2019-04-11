@@ -25,9 +25,9 @@ print("Finished loading model")
 """
 CONFIGURATION
 """
-configuration = 'model_random_vince_vs_random'
-configuration = 'model_random_jortr_vs_random'
-configuration = 'model_random_jort_vs_model_random_vince'
+configuration = 'player_vs_model_random_vince'
+# configuration = 'model_random_jort_vs_random'
+# configuration = 'model_random_jort_vs_model_random_vince'
 games_to_play = 1
 play_slow = True
 
@@ -40,12 +40,6 @@ elif configuration is 'model_random_jort_vs_random':
 elif configuration is 'model_random_vince_vs_random':
   first_player = Player("Vince", "V", "model_vince", model_random_vince)
   second_player = Player("Random", "R", "random")
-elif configuration is 'model_minimax_jort_vs_model_minimax_vince':
-  pass
-elif configuration is 'model_minimax_jort_vs_random':
-  pass
-elif configuration is 'model_minimax_vince_vs_random':
-  pass
 elif configuration is 'random_vs_random':
   first_player = Player("Random", "A", "random")
   second_player = Player("Random", "B", "random")
@@ -57,7 +51,7 @@ elif configuration is 'player_vs_model_random_jort':
   second_player = Player("Bot Jort", "B", "model_jort", model_random_jort)
 elif configuration is 'player_vs_minimax':
   first_player = Player("Vince", "V", "player")
-  second_player = Player("Minimax", "M", "minimax", )
+  second_player = Player("Minimax", "M", "minimax")
 elif configuration is 'player_vs_player':
   first_player = Player("Vince", "V", "player")
   second_player = Player("Jort", "J", "player")
@@ -72,9 +66,9 @@ while (games_won + games_lost) < games_to_play:
   player_that_has_won = connect_four.has_won()
 
   if play_slow:
-    cls()
+    # cls()
     connect_four.board.print_with_colors(first_player.signature, second_player.signature)
-    time.sleep(0.7)
+    time.sleep(0.75)
 
   if (player_that_has_won is not None):
     if player_that_has_won is first_player:
