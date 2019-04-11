@@ -87,7 +87,7 @@ def generate_random_move_states(connect_four: ConnectFour, states_to_create, fir
       connect_four.reset()
     if (connect_four.has_won()):
       winning_player = connect_four.has_won()
-      for (before_board, current_board, column, player) in states_without_a_outcome[-12:]:
+      for (before_board, current_board, column, player) in states_without_a_outcome:
         if (states_count[column] < states_to_create_per_column):
             states.append((before_board, current_board, column, True if player.signature == winning_player.signature else False))
             states_created += 1
