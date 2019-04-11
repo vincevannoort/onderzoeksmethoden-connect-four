@@ -87,13 +87,13 @@ def generate_random_move_states(connect_four: ConnectFour, states_to_create, fir
       connect_four.reset()
     if (connect_four.has_won()):
       winning_player = connect_four.has_won()
-      (before_board, current_board, column, player) = choice(states_without_a_outcome)
-      if (states_count[column] < states_to_create_per_column):
-          states.append((before_board, current_board, column, True if player.signature == winning_player.signature else False))
-          states_created += 1
-          states_count[column] += 1
-          if states_created % 100 is 0:
-            print(f'{states_created}/{states_to_create} are created for random moves, 1: {states_count[0]}, 2: {states_count[1]}, 3: {states_count[2]}, 4: {states_count[3]}, 5: {states_count[4]}, 6: {states_count[5]}, 7: {states_count[6]}')
+      for (before_board, current_board, column, player) in states_without_a_outcome:
+        if (states_count[column] < states_to_create_per_column):
+            states.append((before_board, current_board, column, True if player.signature == winning_player.signature else False))
+            states_created += 1
+            states_count[column] += 1
+            if states_created % 100 is 0:
+              print(f'{states_created}/{states_to_create} are created for random moves, 1: {states_count[0]}, 2: {states_count[1]}, 3: {states_count[2]}, 4: {states_count[3]}, 5: {states_count[4]}, 6: {states_count[5]}, 7: {states_count[6]}')
 
       states_without_a_outcome = []
       connect_four.reset()
