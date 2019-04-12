@@ -26,9 +26,11 @@ if __name__ == '__main__':
   player_vince = deepcopy(players_vince[0])
   player_vince.signature = 'S'
   players_jort = [Player(f'wl{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning2 + args.blocking2 + args.random2}_w{args.winning2}_b{args.blocking2}_r{args.random2}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  # players_jort_new = [Player(f'wln{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t150000_w0_b0_r150000_model_winloss_{i}.h5")) for i in range(args.amount)]
   player_jort = deepcopy(players_jort[0])
   player_jort.signature = 'S'
   players = players_vince + players_jort
+  # players = players_jort + players_jort_new
   print(players)
   print('done loading players')
 
