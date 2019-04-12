@@ -22,10 +22,11 @@ if __name__ == '__main__':
 
   print('start loading players')
   random_player = Player(f'random', 'S', 'random')
-  players_vince = [Player(f'cc{i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning1 + args.blocking1 + args.random1}_w{args.winning1}_b{args.blocking1}_r{args.random1}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
+  # players_vince = [Player(f'cc{i}', 'F', 'model_vince', keras.models.load_model(f"../models/{args.type}_t{args.winning1 + args.blocking1 + args.random1}_w{args.winning1}_b{args.blocking1}_r{args.random1}_model_columnchoice_{i}.h5")) for i in range(args.amount)]
+  players_vince = [Player(f'wl_wb{i}', 'W', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning1 + args.blocking1 + args.random1}_w{args.winning1}_b{args.blocking1}_r{args.random1}_model_winloss_{i}.h5")) for i in range(args.amount)]
   player_vince = deepcopy(players_vince[0])
   player_vince.signature = 'S'
-  players_jort = [Player(f'wl{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning2 + args.blocking2 + args.random2}_w{args.winning2}_b{args.blocking2}_r{args.random2}_model_winloss_{i}.h5")) for i in range(args.amount)]
+  players_jort = [Player(f'wl{i}', 'R', 'model_jort', keras.models.load_model(f"../models/{args.type}_t{args.winning2 + args.blocking2 + args.random2}_w{args.winning2}_b{args.blocking2}_r{args.random2}_model_winloss_{i}.h5")) for i in range(args.amount)]
   # players_jort_new = [Player(f'wln{i}', 'F', 'model_jort', keras.models.load_model(f"../models/{args.type}_t150000_w0_b0_r150000_model_winloss_{i}.h5")) for i in range(args.amount)]
   player_jort = deepcopy(players_jort[0])
   player_jort.signature = 'S'
@@ -100,7 +101,7 @@ if __name__ == '__main__':
     for connect_four in random_board_states[:100]:
       connect_four_adjusted = deepcopy(connect_four)
       connect_four_adjusted.first_player = player
-      connect_four_adjusted.second_player = player_jort if player.type == 'model_vince' else player_vince
+      connect_four_adjusted.second_player = player_jort if player.signature == 'W' else player_vince
       moves_played = 0
 
       while not(connect_four_adjusted.is_draw() or connect_four_adjusted.has_won()):

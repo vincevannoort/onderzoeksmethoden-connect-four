@@ -63,7 +63,7 @@ if __name__ == '__main__':
       states_from_file = pickle.load(board_states_file)
       states_from_file_winning = list(filter(lambda state: state[3], states_from_file))
       states_from_file_losing = list(filter(lambda state: not state[3], states_from_file))
-      states += states_from_file_winning[:25000]
+      states += states_from_file_winning[:75000]
       states += states_from_file_losing[:75000]
 
   train_data = np.array([current_board for (_, current_board, _, _) in states])

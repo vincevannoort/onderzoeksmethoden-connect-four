@@ -46,7 +46,7 @@ class Player:
         except:
           print('Not a valid number, try again')
 
-    elif self.type == 'model_jort':
+    elif self.type == 'winloss':
       def predict_board(column, board):
         prediction = self.model.predict(np.array([board.get_one_hot_array(connect_four.current_player),])) 
         return prediction[0][0]
@@ -56,7 +56,7 @@ class Player:
       (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column))
       column_to_play = best_column
 
-    elif self.type == 'model_vince':
+    elif self.type == 'columnchoice':
       prediction = self.model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
       print(prediction.tolist())
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
