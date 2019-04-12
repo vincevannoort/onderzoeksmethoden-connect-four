@@ -26,7 +26,7 @@ class Connect4KerasModel:
     self.model.compile(optimizer=keras.optimizers.Adam(lr=0.001), loss='mse', metrics=['accuracy','mae'])
 
   def train(self, train_data, train_labels, batch_size):
-    self.model.fit(train_data, train_labels, epochs=100, batch_size=batch_size)
+    self.model.fit(train_data, train_labels, epochs=10, batch_size=batch_size)
 
 if __name__ == '__main__':
   """
@@ -45,12 +45,12 @@ if __name__ == '__main__':
   if (args.winning > 0):
     with open(f'../data/{args.type}_winning_{args.winning}.pickle', 'rb') as board_states_file:
       states_from_file = pickle.load(board_states_file)
-      states += states_from_file[:75000]
+      states += states_from_file
 
   if (args.blocking > 0):
     with open(f'../data/{args.type}_blocking_{args.blocking}.pickle', 'rb') as board_states_file:
       states_from_file = pickle.load(board_states_file)
-      states += states_from_file[:75000]
+      states += states_from_file
 
   if (args.random > 0):
     with open(f'../data/{args.type}_random_{args.random}.pickle', 'rb') as board_states_file:
@@ -59,7 +59,6 @@ if __name__ == '__main__':
       states_from_file_losing = list(map(lambda state: not state[3], states_from_file))
       states += states_from_file
 
-  print(len(states))
   train_data = np.array([before_board for (before_board, _, _, _) in states])
   train_labels = np.array([to_categorical(column, 7) for (_, _, column, _) in states])
 

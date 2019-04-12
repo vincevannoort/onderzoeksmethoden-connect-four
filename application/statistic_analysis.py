@@ -16,7 +16,7 @@ if __name__ == '__main__':
   parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=37500)
   parser.add_argument("--random2", "-r2", help="amount of random moves", type=int, default=150000)
   parser.add_argument("--type", "-t", help="type of moves generated (either 'minimax' or 'random')", type=str, default='random')
-  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=10)
+  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=20)
   args = parser.parse_args()
 
 
