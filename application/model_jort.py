@@ -71,6 +71,6 @@ if __name__ == '__main__':
 
   for index in range(args.amount):
     connect_four_model = Connect4KerasModel(7, 6)
-    connect_four_model.train(train_data, train_labels, 7 * 3 * 3)
+    connect_four_model.train(train_data, train_labels, 7 * 3 * 3)``
     # connect_four_model.predict(np.array(train_data[1:10]), np.array(train_labels[1:10]))
-    connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winloss_{index}.h5')
+    connect_four_model.model.save(f'../models/{args.type}_t{args.winning + args.blocking + args.random}_w{args.winning}_b{args.blocking}_r{args.random}_model_winlose_{index}.h5')

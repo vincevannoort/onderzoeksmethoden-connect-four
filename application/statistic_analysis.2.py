@@ -83,15 +83,14 @@ class Analysis:
           draw_against += 1
     return (total_moves_played, won_against, draw_against)
 
-  def test_player(self, player: Player):
-    print(f"Started for player: {player.name}")
+  def test_player(self, player: Player, index: int):
+    print(f"Started for player: {index}")
     correct_winning_moves = self.make_winning_moves(player)
     correct_blocking_moves = self.make_blocking_moves(player)
     (total_moves_played_random, won_against_random, draw_against_random) = self.moves_played_against(player, self.random_player)
     opposite_player = self.player_one if player.signature == 'T' else self.player_two
     (total_moves_played_opposite, won_against_opposite, draw_against_opposite) = self.moves_played_against(player, opposite_player)
 
-    print(f"Done for player: {player.name}")
     return (
       player.name,
       player.type,
@@ -108,10 +107,7 @@ class Analysis:
     )
 
   def testing(self):
-    results_per_player = []
-    for player in self.players:
-      results_per_player.append(self.test_player(player))
-
+    results_per_player = [self.test_player(player, index) for (index, player) in enumerate(self.players)]
     results_per_player_data = pd.DataFrame(results_per_player, columns = [
       'Player',
       'Type',
