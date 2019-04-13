@@ -18,37 +18,37 @@ generated_by_using = 'minimax'
 
 print("Start loading model")
 # model_random_vince = keras.models.load_model(f"../models/trained_with_{generated_by_using}/model_vince_{states_to_create}_moves_0.h5")
-# model_random_vince = keras.models.load_model(f"../models/random_t200000_w100000_b100000_r0_model_columnchoice_0.h5")
+model_random_vince = keras.models.load_model(f"../models/random_t200000_w100000_b100000_r0_model_columnchoice_0.h5")
 model_random_jort = keras.models.load_model(f"../models/random_t400000_w100000_b100000_r200000_model_winloss_0.h5",)
 print("Finished loading model")
 
 """
 CONFIGURATION
 """
-# configuration = 'player_vs_model_random_jort'
-configuration = 'model_random_jort_vs_random'
+configuration = 'player_vs_model_random_vince'
+# configuration = 'model_random_jort_vs_random'
 # configuration = 'model_random_jort_vs_model_random_vince'
-games_to_play = 100
+games_to_play = 1
 play_slow = False
 
 if configuration is 'model_random_jort_vs_model_random_vince':
-  first_player = Player("Vince", "V", "model_vince", model_random_vince)
-  second_player = Player("Jort", "J", "model_jort", model_random_jort)
+  first_player = Player("Vince", "V", "columnchoice", model_random_vince)
+  second_player = Player("Jort", "J", "winloss", model_random_jort)
 elif configuration is 'model_random_jort_vs_random':
-  first_player = Player("Jort", "J", "model_jort", model_random_jort)
+  first_player = Player("Jort", "J", "winloss", model_random_jort)
   second_player = Player("Random", "R", "random")
 elif configuration is 'model_random_vince_vs_random':
-  first_player = Player("Vince", "V", "model_vince", model_random_vince)
+  first_player = Player("Vince", "V", "columnchoice", model_random_vince)
   second_player = Player("Random", "R", "random")
 elif configuration is 'random_vs_random':
   first_player = Player("Random", "A", "random")
   second_player = Player("Random", "B", "random")
 elif configuration is 'player_vs_model_random_vince':
   first_player = Player("Vince", "V", "player")
-  second_player = Player("Bot Vince", "B", "model_vince", model_random_vince)
+  second_player = Player("Bot Vince", "B", "columnchoice", model_random_vince)
 elif configuration is 'player_vs_model_random_jort':
   first_player = Player("Jort", "J", "player")
-  second_player = Player("Bot Jort", "B", "model_jort", model_random_jort)
+  second_player = Player("Bot Jort", "B", "winloss", model_random_jort)
 elif configuration is 'player_vs_minimax':
   first_player = Player("Vince", "V", "player")
   second_player = Player("Minimax", "M", "minimax")
