@@ -16,14 +16,14 @@ class Analysis:
       args.name1, 
       'O',
       args.model1,
-      keras.models.load_model(f"../models/random_t{args.winning1 + args.blocking1 + args.random1}_w{args.winning1}_b{args.blocking1}_r{args.random1}_model_{args.model1}_{i}.h5"))
+      keras.models.load_model(f"../models/t{args.winning1 + args.blocking1 + args.random_winning1 + args.random_losing1}_w{args.winning1}_b{args.blocking1}_rw{args.random_winning1}_rl{args.random_losing1}_model_{args.model1}_{i}.h5"))
       for i in range(args.amount)
     ]
     self.players_two = [Player(
       args.name2, 
       'T',
       args.model2,
-      keras.models.load_model(f"../models/random_t{args.winning2 + args.blocking2 + args.random2}_w{args.winning2}_b{args.blocking2}_r{args.random2}_model_{args.model2}_{i}.h5"))
+      keras.models.load_model(f"../models/t{args.winning2 + args.blocking2 + args.random_winning2 + args.random_losing2}_w{args.winning2}_b{args.blocking2}_rw{args.random_winning2}_rl{args.random_losing2}_model_{args.model2}_{i}.h5"))
       for i in range(args.amount)
     ]
     self.player_one = deepcopy(self.players_one[0])
@@ -131,12 +131,14 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument("--winning1", "-w1", help="amount of winning moves", type=int, default=75000)
   parser.add_argument("--blocking1", "-b1", help="amount of blocking moves", type=int, default=75000)
-  parser.add_argument("--random1", "-r1", help="amount of random moves", type=int, default=0)
+  parser.add_argument("--random_winning1", "-rw1", help="amount of random moves", type=int, default=0)
+  parser.add_argument("--random_losing1", "-rl1", help="amount of random moves", type=int, default=0)
   parser.add_argument("--model1", "-m1", help="which model", type=str)
   parser.add_argument("--name1", "-n1", help="name of model", type=str)
   parser.add_argument("--winning2", "-w2", help="amount of winning moves", type=int, default=37500)
   parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=37500)
-  parser.add_argument("--random2", "-r2", help="amount of random moves", type=int, default=150000)
+  parser.add_argument("--random_winning2", "-rw2", help="amount of random moves", type=int, default=0)
+  parser.add_argument("--random_losing2", "-rl2", help="amount of random moves", type=int, default=0)
   parser.add_argument("--model2", "-m2", help="which model", type=str)
   parser.add_argument("--name2", "-n2", help="name of model", type=str)
   parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=20)
