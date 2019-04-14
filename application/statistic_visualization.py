@@ -32,10 +32,10 @@ class Visualizer:
   
   def plot_winning_moves_per_player(self):
     plot = sns.barplot(
-      x="Player", 
+      x=self.results_per_player_data.index, 
       y="Winning moves", 
-      palette=["#63b7ff"] * 10 + ["#00844a"] * 10, 
-      data=pd.concat([self.results_per_player_data[:int(self.amount / 2)], self.results_per_player_data[self.amount:(self.amount + int(self.amount / 2))]])
+      palette=["#63b7ff"] * self.amount + ["#00844a"] * self.amount, 
+      data=self.results_per_player_data
     )
     plot.set(
       xlabel="Classifier", 
