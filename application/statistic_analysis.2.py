@@ -15,15 +15,15 @@ class Analysis:
     self.players_one = [Player(
       args.name1, 
       'O',
-      args.model1,
-      keras.models.load_model(f"../models/t{args.winning1 + args.blocking1 + args.random_winning1 + args.random_losing1}_w{args.winning1}_b{args.blocking1}_rw{args.random_winning1}_rl{args.random_losing1}_model_{args.model1}_{i}.h5"))
+      args.classifier1,
+      self.load_model(i, args.winning1, args.blocking1, args.random_winning1, args.random_losing1, args.classifier1))
       for i in range(args.amount)
     ]
     self.players_two = [Player(
       args.name2, 
       'T',
-      args.model2,
-      keras.models.load_model(f"../models/t{args.winning2 + args.blocking2 + args.random_winning2 + args.random_losing2}_w{args.winning2}_b{args.blocking2}_rw{args.random_winning2}_rl{args.random_losing2}_model_{args.model2}_{i}.h5"))
+      args.classifier2,
+      self.load_model(i, args.winning2, args.blocking2, args.random_winning2, args.random_losing2, args.classifier2))
       for i in range(args.amount)
     ]
     self.player_one = deepcopy(self.players_one[0])
@@ -38,6 +38,14 @@ class Analysis:
     with open(f'../statistics/tests/random_random_board_states_1000.txt', 'rb') as random_board_states_file:
       self.random_board_states = pickle.load(random_board_states_file)
     print("Done loading tests")
+
+  def load_model(self, i, winning, blocking, random_winning, random_losing, classifier):
+    if classifier == "winlose":
+      return keras.models.load_model(f"../models/t{winning + blocking + random_winning + random_losing}_w{winning}_b{blocking}_rw{random_winning}_rl{random_losing}_model_{classifier}_{i}.h5")
+    elif classifier == 'columnchoice':
+      return keras.models.load_model(f"../models/t{winning + blocking + random_winning}_w{winning}_b{blocking}_rw{random_winning}_model_{classifier}_{i}.h5")
+    else:
+      raise Exception("Model could not be found.")
 
   def make_winning_moves(self, player: Player):
     correct_winning_moves = 0
@@ -133,15 +141,15 @@ if __name__ == '__main__':
   parser.add_argument("--blocking1", "-b1", help="amount of blocking moves", type=int, default=75000)
   parser.add_argument("--random_winning1", "-rw1", help="amount of random moves", type=int, default=0)
   parser.add_argument("--random_losing1", "-rl1", help="amount of random moves", type=int, default=0)
-  parser.add_argument("--model1", "-m1", help="which model", type=str)
+  parser.add_argument("--classifier1", "-c1", help="which classifier", type=str)
   parser.add_argument("--name1", "-n1", help="name of model", type=str)
   parser.add_argument("--winning2", "-w2", help="amount of winning moves", type=int, default=37500)
   parser.add_argument("--blocking2", "-b2", help="amount of blocking moves", type=int, default=37500)
   parser.add_argument("--random_winning2", "-rw2", help="amount of random moves", type=int, default=0)
   parser.add_argument("--random_losing2", "-rl2", help="amount of random moves", type=int, default=0)
-  parser.add_argument("--model2", "-m2", help="which model", type=str)
+  parser.add_argument("--classifier2", "-c2", help="which classifier", type=str)
   parser.add_argument("--name2", "-n2", help="name of model", type=str)
-  parser.add_argument("--amount", "-a", help="amount of models to create", type=int, default=20)
+  parser.add_argument("--amount", "-a", help="amount of models", type=int, default=20)
   args = parser.parse_args()
 
   analysis = Analysis(args)
