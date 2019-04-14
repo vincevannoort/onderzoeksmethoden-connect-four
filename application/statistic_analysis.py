@@ -26,10 +26,12 @@ class Analysis:
       self.load_model(i, args.winning2, args.blocking2, args.random_winning2, args.random_losing2, args.classifier2))
       for i in range(args.amount)
     ]
-    self.player_one = deepcopy(self.players_one[0])
-    self.player_two = deepcopy(self.players_two[0]) 
+    self.player_one_opposite = deepcopy(self.players_one[0])
+    self.player_one_opposite.signature = 'S'
+    self.player_two_opposite = deepcopy(self.players_two[0]) 
+    self.player_two_opposite.signature = 'S'
     self.players = self.players_one + self.players_two
-    print("Done loading players") 
+    print("Done loading players")
 
     with open(f'../statistics/tests/random_make_winning_move_states_1000.txt', 'rb') as winning_move_states_file:
       self.winning_moves_states = pickle.load(winning_move_states_file)
@@ -96,7 +98,7 @@ class Analysis:
     correct_winning_moves = self.make_winning_moves(player)
     correct_blocking_moves = self.make_blocking_moves(player)
     (total_moves_played_random, won_against_random, draw_against_random) = self.moves_played_against(player, self.random_player)
-    opposite_player = self.player_one if player.signature == 'T' else self.player_two
+    opposite_player = self.player_two_opposite if player.name == args.name1 else self.player_one_opposite
     (total_moves_played_opposite, won_against_opposite, draw_against_opposite) = self.moves_played_against(player, opposite_player)
 
     return (
