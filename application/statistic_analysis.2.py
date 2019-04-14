@@ -11,17 +11,17 @@ from multiprocessing import Pool
 class Analysis:
   def __init__(self, args):
     self.args = args
-    self.random_player = Player("random", 'R', "random")
+    self.random_player = Player("random", 'S', "random")
     self.players_one = [Player(
       args.name1, 
-      'O',
+      'F',
       args.classifier1,
       self.load_model(i, args.winning1, args.blocking1, args.random_winning1, args.random_losing1, args.classifier1))
       for i in range(args.amount)
     ]
     self.players_two = [Player(
       args.name2, 
-      'T',
+      'F',
       args.classifier2,
       self.load_model(i, args.winning2, args.blocking2, args.random_winning2, args.random_losing2, args.classifier2))
       for i in range(args.amount)
