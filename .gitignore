@@ -1,3 +1,7 @@
+# Specifics for our project
+data/*.pickle
+
+# General
 *.csv
 .DS_Store
 model_logs

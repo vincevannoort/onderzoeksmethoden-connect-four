@@ -25,10 +25,10 @@ class Player:
     current_player = connect_four.current_player
     opposite_player = connect_four.switch_player(connect_four.current_player)
 
-    if self.type is 'random':
+    if self.type == 'random':
       column_to_play = choice(connect_four.board.get_possible_columns())
 
-    elif self.type is 'minimax':
+    elif self.type == 'minimax':
       if uniform(0, 1) <= self.alpha:
         mini_max = Minimax(connect_four.board)
         (best_moves, _) = mini_max.best_move(2, connect_four.board, current_player, opposite_player)
@@ -36,7 +36,7 @@ class Player:
       else:
         column_to_play = choice(connect_four.board.get_possible_columns())
 
-    elif self.type is 'player':
+    elif self.type == 'player':
       while True:
         try:
           connect_four.board.print_with_colors(current_player.signature, opposite_player.signature)
@@ -46,32 +46,26 @@ class Player:
         except:
           print('Not a valid number, try again')
 
-    elif self.type is 'model_jort':
-      def predict_board(column, board, model, player):
-        np_board = np.array([board.get_one_hot_array(player)])
-        np_board = np.reshape(np_board, (1, board.height, board.width, 3))
-        prediction = model.predict(np_board) 
-        # Convert [[0.4]] -> 0.4
-        prediction = prediction[0][0]
-        return prediction
+    elif self.type == 'winloss' or self.type == 'winlose' or self.type == 'model_jort':
+      def predict_board(column, board):
+        prediction = self.model.predict(np.array([board.get_one_hot_array(connect_four.current_player),])) 
+        return prediction[0][0]
 
       possible_boards_columns = connect_four.possible_boards_columns(current_player)
-      # When predictions are the same doesn't pick the same column all the time.
       shuffle(possible_boards_columns)      
-      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column, self.model, current_player))
-      
+      (best_column, best_board) = max(possible_boards_columns, key=lambda board_column: predict_board(*board_column))
       column_to_play = best_column
 
-    elif self.type is 'model_vince':
-      board_representation = np.array(connect_four.board.get_one_hot_array(connect_four.current_player))
-      board_representation = np.reshape(board_representation, (connect_four.board.height, connect_four.board.width, 3))
-      prediction = self.model.predict(np.array([board_representation,]))
+    elif self.type == 'columnchoice' or self.type == 'model_vince':
+      prediction = self.model.predict(np.array([connect_four.board.get_one_hot_array(connect_four.current_player),]))
       possible_columns = connect_four.board.get_possible_columns_as_one_hot_array()
-      # TODO: shuffle if prediction chances are equal.
       for index, possible in enumerate(possible_columns.tolist()):
         if (int(possible) is 0):
           np.put(prediction, index, 0)
       column_to_play = np.argmax(prediction)
+
+    else:
+     raise Exception('Invalid type was passed to the player')
 
     return column_to_play
 
@@ -123,12 +117,11 @@ class Board:
     def hole_to_array(hole, player: Player):
       """
       Generates one hot array from hole.
-      Empty hole        -> [1, 0, 0] 
-      Given player      -> [0, 1, 0] 
-      Not given player  -> [0, 0, 1]
+      Empty hole        -> [0, 0] 
+      Given player      -> [1, 0] 
+      Not given player  -> [0, 1]
       """
       return [
-        1 if hole is 0 else 0, # hole empty
         1 if hole is player.signature else 0, # hole self
         1 if hole is not player.signature and hole is not 0 else 0, # hole enemy
       ]
@@ -136,7 +129,7 @@ class Board:
     board_representation = []
     for hole in self.holes:
       board_representation += hole_to_array(hole, player)
-    return board_representation
+    return np.reshape(np.array(board_representation), (self.height, self.width, 2))
 
   def __str__(self):
     board_representation = ""
@@ -156,6 +149,15 @@ class ConnectFour:
 
   def reset(self):
     self.__init__(self.first_player, self.second_player)
+
+  def get_opponent(self):
+    return self.switch_player(self.current_player)
+
+  def get_move(self):
+    return self.current_player.get_move(self)
+
+  def play_move(self):
+    self.current_player.play_move(self)
 
   def switch_player(self, player: Player):
     return self.second_player if self.current_player is self.first_player else self.first_player
